@@ -1,28 +1,47 @@
-# Use a lightweight production image with Nginx + PHP-FPM pre-installed
-FROM richarvey/nginx-php-fpm:3.1.6
+# Use PHP 8.3 with Apache
+FROM php:8.3-apache
 
-# Copy your application code into the container
+# Enable Apache mod_rewrite for Laravel
+RUN a2enmod rewrite
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_pgsql
+
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy application files
 COPY . .
 
-# Install dependencies during build
+# Set correct permissions
+RUN chown -R www-data:www-data /var/www/html
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Install PHP and Node dependencies
 RUN composer install --no-interaction --optimize-autoloader --no-dev && \
     npm install --ignore-scripts && \
     npm run build
 
-# Render/Production specific configurations
-ENV SKIP_COMPOSER 0
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Set Apache document root
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
-# Laravel production settings
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+# Set environment
+ENV APP_ENV=production
+ENV APP_DEBUG=false
 
-# Allow composer to run as root for the build process
-ENV COMPOSER_ALLOW_SUPERUSER 1
-
-# Start the built-in start script
-CMD ["/start.sh"]
+# Start Apache
+CMD ["apache2-foreground"]
