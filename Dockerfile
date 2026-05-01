@@ -4,6 +4,11 @@ FROM richarvey/nginx-php-fpm:3.1.6
 # Copy your application code into the container
 COPY . .
 
+# Install dependencies during build
+RUN composer install --no-interaction --optimize-autoloader --no-dev && \
+    npm install --ignore-scripts && \
+    npm run build
+
 # Render/Production specific configurations
 ENV SKIP_COMPOSER 0
 ENV WEBROOT /var/www/html/public
