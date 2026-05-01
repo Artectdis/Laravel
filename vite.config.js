@@ -8,6 +8,9 @@ export default defineConfig({
         hmr: {
             host: 'localhost',
         },
+        watch: {
+            ignored: ['**/storage/framework/views/**'],
+        },
     },
     plugins: [
         laravel({
@@ -16,9 +19,4 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
-    server: {
-        watch: {
-            ignored: ['**/storage/framework/views/**'],
-        },
-    },
 });
