@@ -4,9 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PostController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [ChirpController::class, 'index']);
 Route::get('/blog', function () {
     return view('blog');
 });

@@ -11,6 +11,7 @@
 
     <div style="font-family: Poppins, sans-serif;">
         @yield('content')
+
     </div>
 </body>
 </html>
