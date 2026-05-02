@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ChirpController;
 
 Route::get('/', [ChirpController::class, 'index']);
 Route::get('/blog', function () {
