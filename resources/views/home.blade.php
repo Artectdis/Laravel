@@ -12,7 +12,7 @@
                 <!-- Chirp Form -->
         <div class="card bg-base-100 shadow mt-8">
             <div class="card-body">
-                <form method="POST" action="/chirps">
+                <form method="POST" action="/chirps" novalidate>
                     @csrf
                     <div class="form-control w-full">
                         <textarea
