@@ -7,7 +7,7 @@
                 <div class="avatar">
                     <a href="/profile/{{ $chirp->user->id }}">
                         <div class="size-10 rounded-full">
-                            <img src="{{ $chirp->user->avatar_url }}" alt="{{ $chirp->user->name }}'s avatar"
+                            <img loading="lazy" src="{{ $chirp->user->avatar_url }}" alt="{{ $chirp->user->name }}'s avatar"
                                 class="rounded-full" />
                         </div>
                     </a>

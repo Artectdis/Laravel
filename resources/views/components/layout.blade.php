@@ -61,7 +61,7 @@
                 <a href="/profile/{{ auth()->user()->id }}">
                     <div
                         class="topbar-profile flex flex-row bg-white hover:bg-gray-100 ring-[#E4E4E5] hover:ring-2 rounded-full transition-all duration-500 ease-in-out py-1 px-2 gap-2 items-center text-sm text-black">
-                        <strong>{{ auth()->user()->name }} </strong> <img src="{{ auth()->user()->avatar_url }}"
+                        <strong>{{ auth()->user()->name }} </strong> <img loading="lazy" src="{{ auth()->user()->avatar_url }}"
                             class="size-7 rounded-full">
                     </div>
                 </a>

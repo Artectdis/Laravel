@@ -68,7 +68,7 @@
                                 class="justify-self-end btn btn-ghost btn-sm">
                                 Change
                             </button>
-                        </form><img src="{{ $user->avatar_url }}"
+                        </form><img loading="lazy" src="{{ $user->avatar_url }}"
                             class="size-20 rounded-full justify-self-end self-top outline-white outline-3">
                     </div>
                 </div>

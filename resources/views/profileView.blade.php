@@ -3,7 +3,7 @@
         <div>
             <div class="flex flex-col gap-4 mt-4">
                 <div class="flex flex-row justify-between">
-                    <img src="{{ $user->avatar_url }}"
+                    <img loading="lazy" src="{{ $user->avatar_url }}"
                         class="size-30 rounded-full justify-self-end self-top outline-white outline-3">
                     @if ($editPermission)
                         <button class="btn btn-ghost py-2 px-4"><a href="/profile">Edit Profile</a></button>
