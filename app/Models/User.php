@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'phone_number', 'birthday', 'avatar'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -35,4 +35,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Chirp::class);
     }
+
+    public function getAvatarUrlAttribute()
+    {
+    if (!$this->avatar) {
+        return 'https://avatars.laravel.cloud/' . urlencode($this->email);
+    }
+
+    return env('SUPABASE_PUBLIC_URL') . $this->avatar;
+    }
+
 }

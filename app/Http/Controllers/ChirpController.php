@@ -14,7 +14,7 @@ class ChirpController extends Controller
      */
     public function index()
     {
-        $chirps = Chirp::with('user')->latest()->take(50)->get();;
+        $chirps = Chirp::with('user')->latest()->take(10)->get();;
 
     return view('home', ['chirps' => $chirps]);
     }
@@ -92,6 +92,6 @@ class ChirpController extends Controller
         $this->authorize('delete', $chirp);
         $chirp->delete();
 
-        return redirect('/')->with('success', 'Chirp deleted successfully!');
+        return back()->with('success', 'Chirp deleted successfully!');
     }
 }

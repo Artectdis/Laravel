@@ -162,6 +162,17 @@ a:hover {
     background: color-mix(in oklab, var(--color-primary) 85%, black);
 }
 
+:where(.btn-secondary),
+:where(a.btn-secondary) {
+    background: var(--color-secondary);
+    color: var(--color-secondary-content);
+    border: none;
+}
+
+:where(.btn-secondary:hover),
+:where(a.btn-secondary:hover) {
+    background: color-mix(in oklab, var(--color-secondary) 50%, #4697E7);
+}
 :where(.btn-ghost),
 :where(a.btn-ghost) {
     color: var(--text-12);
@@ -187,15 +198,22 @@ a:hover {
     font-size: .75rem;
 }
 
-/* Toast-only success color */
 :where(.toast) {
+    position: fixed;
     --color-success: #598b6e;
+    --color-error: #bf4949;
     --color-success-content: #ffffff;
+    z-index: 2147483647;
 }
 
 /* Hairline border + ensure text/icons pick up the content color */
 :where(.toast .alert-success) {
     background: var(--color-success);
+    color: var(--color-success-content);
+    border: var(--border) solid rgba(0, 0, 0, 0.08);
+}
+:where(.toast .alert-danger) {
+    background: var(--color-error);
     color: var(--color-success-content);
     border: var(--border) solid rgba(0, 0, 0, 0.08);
 }
@@ -209,7 +227,7 @@ a:hover {
 }
 
 /* Timestamps / separators (like your `·` and “ago”) */
-.text-base-content\\/60 {
+.text-base-content\/60 {
     color: var(--text-10) !important;
 }
 
@@ -242,6 +260,11 @@ a.btn-ghost:visited {
 
 a.btn-primary,
 a.btn-primary:visited {
+    color: var(--color-primary-content) !important;
+}
+
+a.btn-secondary,
+a.btn-secondary:visited {
     color: var(--color-primary-content) !important;
 }
 
@@ -284,6 +307,51 @@ h6 {
     font-weight: 400 !important;
 }
 
+
+input {
+    background: #fdfdfd;
+}
+
+input[name="birthday"]::placeholder {
+    color: #7f7f7f;
+    opacity: 1;
+}
+
+input[type="date"]:invalid {
+    color: #7f7f7f;
+}
+
+input[type="date"]:valid {
+    color: inherit;
+}
+
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+.dark {
+  --bg-color: #1a202c;
+  --text-color: #f7fafc;
+}
+
+body {
+    font-family: 'Instrument Sans', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease;
+}
+
+
+.dark-mode-filter {
+  filter: invert(100%) hue-rotate(180deg);
+}
+
+/* Re-invert images and videos so they appear normal */
+.dark-mode-filter img, .dark-mode-filter video, .dark-mode-filter iframe, .dark-mode-filter picture {
+    filter: invert(100%) hue-rotate(180deg);
+}
+
 html {
   scrollbar-color: #888 #F5F5F5;
   scrollbar-width: thin;
@@ -296,4 +364,41 @@ html {
 ::-webkit-scrollbar-thumb {
   background: #888;
   border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html {
+  scrollbar-color: #888 #fff;
+}
+
+.dark-mode-filter .dark-toggle {
+    fill: #000;
+}
+
+.dark-mode-filter .topbar-profile  {
+    background: #eee;
+}
+
+.dark-mode-filter .invert-g * {
+    filter: brightness(0) !important;
+}
+
+html.dark-mode-filter {
+  scrollbar-color: #222 #000;
+  background: black;
+}
+
+html.dark-mode-filter::-webkit-scrollbar-thumb {
+  background: #000 !important;
+}
+
+html.dark-mode-filter::-webkit-scrollbar-track {
+  background: transparent; /* Makes the white track go away */
+}
+
+/* 3. Fix for any inner textareas or divs with scrollbars */
+.dark-mode-filter *::-webkit-scrollbar-thumb {
+  background: #000 !important;
 }

@@ -5,10 +5,12 @@
         <div class="flex space-x-3">
             @if ($chirp->user)
                 <div class="avatar">
-                    <div class="size-10 rounded-full">
-                        <img src="https://avatars.laravel.cloud/{{ urlencode($chirp->user->email) }}"
-                            alt="{{ $chirp->user->name }}'s avatar" class="rounded-full" />
-                    </div>
+                    <a href="/profile/{{ $chirp->user->id }}">
+                        <div class="size-10 rounded-full">
+                            <img src="{{ $chirp->user->avatar_url }}" alt="{{ $chirp->user->name }}'s avatar"
+                                class="rounded-full" />
+                        </div>
+                    </a>
                 </div>
             @else
                 <div class="avatar placeholder">
@@ -26,12 +28,12 @@
                         <span class="text-base-content/60">·</span>
                         <span class="text-sm text-base-content/60">{{ $chirp->created_at->diffForHumans() }}</span>
                         @if ($chirp->updated_at->gt($chirp->created_at->addSeconds(5)))
-                        <span class="text-sm text-base-content/60">(edited)</span>
+                            <span class="text-sm text-base-content/60">(edited)</span>
                         @endif
                     </div>
 
-                    <!-- Replace the temporary @php block and $canEdit check with: -->
-                    @can('update', $chirp)
+                    <!-- Only show edit/delete if user owns the chirp -->
+                    @if (auth()->check() && auth()->id() === $chirp->user_id)
                         <div class="flex gap-1">
                             <a href="/chirps/{{ $chirp->id }}/edit" class="btn btn-ghost btn-xs">
                                 Edit
@@ -46,7 +48,7 @@
                                 </button>
                             </form>
                         </div>
-                    @endcan
+                    @endif
                 </div>
                 <p class="mt-1">{{ $chirp->message }}</p>
             </div>
