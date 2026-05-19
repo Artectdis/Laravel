@@ -1,14 +1,14 @@
 @props(['chirp'])
 
-<div class="card bg-base-100">
+<div class="card bg-base-100 group">
     <div class="card-body">
         <div class="flex space-x-3">
             @if ($chirp->user)
                 <div class="avatar">
                     <a href="/profile/{{ $chirp->user->id }}">
                         <div class="size-10 rounded-full">
-                            <img loading="lazy" src="{{ $chirp->user->avatar_url }}" alt="{{ $chirp->user->name }}'s avatar"
-                                class="rounded-full" />
+                            <img loading="lazy" src="{{ $chirp->user->avatar_url }}"
+                                alt="{{ $chirp->user->name }}'s avatar" class="rounded-full" />
                         </div>
                     </a>
                 </div>
@@ -34,6 +34,10 @@
 
                     <!-- Only show edit/delete if user owns the chirp -->
                     @if (auth()->check() && auth()->id() === $chirp->user_id)
+                        <x-dropdown icon="ellipsis-vertical" static>
+                            <x-dropdown.items text="Settings" />
+                            <x-dropdown.items text="Logout" separator />
+                        </x-dropdown>
                         <div class="flex gap-1">
                             <a href="/chirps/{{ $chirp->id }}/edit" class="btn btn-ghost btn-xs">
                                 Edit
@@ -50,7 +54,12 @@
                         </div>
                     @endif
                 </div>
-                <p class="mt-1">{{ $chirp->message }}</p>
+                <div class="flex justify-between w-full pt-0.5 trix-content">
+                    @safeHtml($chirp->message)
+                    <div class="opacity-0 group-hover:opacity-100 transition-all duration-500 pt-6 ease-in-out">
+                        <livewire:like :chirp="$chirp" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany; 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -35,7 +36,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Chirp::class);
     }
-
+    
+    public function likes(): HasMany
+    {
+       return $this->hasMany(Like::class); 
+    }
+    
     public function getAvatarUrlAttribute()
     {
     if (!$this->avatar) {

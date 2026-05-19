@@ -19,6 +19,8 @@ $loadMore = function () {
     $perPage = 20; // Load 20 at a time — fewer round trips for 100 chirps
 
     $query = Chirp::with('user:id,name,email,avatar') // Only needed user columns
+        ->withCount('likes') // Eager load likes count
+        ->with(['userLike' => fn($q) => $q->where('user_id', auth()->id())]) // Eager load current user's like if exists
         ->select('id', 'user_id', 'message', 'created_at', 'updated_at') // No table prefix needed here
         ->latest('id'); // Relies on the PK index — fastest possible ordering
 
@@ -56,7 +58,7 @@ $loadMore = function () {
             <div class="hero py-12">
                 <div class="hero-content text-center">
                     <div>
-                        <svg class="mx-auto h-12 w-12 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="mx-auto h-12 w-12 opacity-30" fill="none" st roke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
                             </path>

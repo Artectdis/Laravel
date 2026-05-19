@@ -32,12 +32,15 @@ class ChirpController extends Controller
      */
     public function store(Request $request)
     {
+        $plainTextMessage = trim(strip_tags($request->message));
+        $request->merge(['message_count' => mb_strlen($plainTextMessage)]);
         $validated = $request->validate([
-            'message' => 'required|string|max:255|min:5',
+            'message' => 'required|string',
+            'message_count' => 'numeric|max:255|min:5',
         ], [
             'message.required' => 'Please write something to chirp! 🐤',
-            'message.max' => 'Your chirp is too long! Keep it under 255 characters. 🐤',
-            'message.min' => 'Your chirp is too short! Make it at least 5 characters. 🐤'
+            'message_count.max' => 'Your chirp is too long! Keep it under 255 characters. 🐤',
+            'message_count.min' => 'Your chirp is too short! Make it at least 5 characters. 🐤'
         ]);
 
         auth()->user()->chirps()->create($validated);

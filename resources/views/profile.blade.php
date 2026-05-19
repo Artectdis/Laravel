@@ -109,9 +109,11 @@
             <h2 id="chirps" class="text-2xl font-bold mt-12 mb-2">Your Chirps</h2>
             <hr class="border-gray-300 mb-4" />
             <div class="flex flex-col gap-y-2">
-                @foreach ($chirps as $chirp)
+                @forelse ($chirps as $chirp)
                     <x-chirp :chirp="$chirp" />
-                @endforeach
+                @empty
+                    <p class="text-gray-500 text-lg">No chirps have been created yet.</p>
+                @endforelse
             </div>
 
             <h2 id="settings" class="text-2xl font-bold mt-12 mb-2">Your Settings</h2>

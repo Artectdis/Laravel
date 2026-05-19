@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
+        // Register ServerTimingMiddleware to track performance metrics
+        $middleware->append(\App\Http\Middleware\ServerTimingMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -8,9 +8,12 @@ use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\Auth\Register;
 use App\Http\Controllers\Auth\Logout;
 use App\Http\Controllers\Auth\Login;
+use Livewire\Volt\Volt;
 
 Route::get('/', [ChirpController::class, 'index']);
 Route::get('/profile/{id}', [ProfileController::class, 'showProfile']);
+Volt::route('/search/users', 'searchUsers');
+Volt::route('/search/chirps', 'searchChirps');
 Route::middleware('auth')->group(function() {
     Route::post('/chirps', [ChirpController::class, 'store']);
     Route::get('/chirps/{chirp}/edit', [ChirpController::class, 'edit']);

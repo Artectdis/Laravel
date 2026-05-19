@@ -18,7 +18,7 @@
 <body class="min-h-screen flex flex-col bg-base-200 font-sans">
     <nav class="navbar bg-base-100">
         <div class="navbar-start">
-            <a href="/">
+            <a href="/" class="mr-2">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 312 69" class="h-7 w-auto px-4">
                     <g class="invert-g">
                         <path fill="#D9D9D9"
@@ -47,6 +47,8 @@
                 </svg>
             </a>
         </div>
+        <livewire:search />
+
         <div class="navbar-end gap-2">
             <button type="submit" id="dark-toggle"
                 style="background: none; border: none; padding: 0; cursor: pointer"><svg
