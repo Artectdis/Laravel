@@ -402,3 +402,18 @@ html.dark-mode-filter::-webkit-scrollbar-track {
 .dark-mode-filter *::-webkit-scrollbar-thumb {
   background: #000 !important;
 }
+
+trix-editor {
+    min-height: 8rem !important; /* Roughly 'rows="4"' */
+    border-radius: var(--rounded-btn, 0.5rem);
+    border: 1px solid hsl(var(--bc) / 0.2);
+}
+
+.border-error trix-editor {
+    border-color: hsl(var(--er));
+}
+
+.trix-button-group--file-tools {
+    display: none !important;
+}
+
