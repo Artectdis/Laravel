@@ -34,10 +34,6 @@
 
                     <!-- Only show edit/delete if user owns the chirp -->
                     @if (auth()->check() && auth()->id() === $chirp->user_id)
-                        <x-dropdown icon="ellipsis-vertical" static>
-                            <x-dropdown.items text="Settings" />
-                            <x-dropdown.items text="Logout" separator />
-                        </x-dropdown>
                         <div class="flex gap-1">
                             <a href="/chirps/{{ $chirp->id }}/edit" class="btn btn-ghost btn-xs">
                                 Edit

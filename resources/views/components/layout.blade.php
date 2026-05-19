@@ -9,6 +9,7 @@
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <x-rich-text::styles />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         document.documentElement.classList.toggle('dark-mode-filter', localStorage.getItem('theme') === 'dark');
@@ -63,8 +64,8 @@
                 <a href="/profile/{{ auth()->user()->id }}">
                     <div
                         class="topbar-profile flex flex-row bg-white hover:bg-gray-100 ring-[#E4E4E5] hover:ring-2 rounded-full transition-all duration-500 ease-in-out py-1 px-2 gap-2 items-center text-sm text-black">
-                        <strong>{{ auth()->user()->name }} </strong> <img loading="lazy" src="{{ auth()->user()->avatar_url }}"
-                            class="size-7 rounded-full">
+                        <strong>{{ auth()->user()->name }} </strong> <img loading="lazy"
+                            src="{{ auth()->user()->avatar_url }}" class="size-7 rounded-full">
                     </div>
                 </a>
                 <form method="POST" action="/logout" class="inline">
