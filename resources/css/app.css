@@ -1,9 +1,11 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+@plugin '@tailwindcss/forms';
+@import '../../vendor/tallstackui/tallstackui/css/v4.css'; 
 
+@source '../../vendor/tallstackui/tallstackui/**/*.php';
+@source '../views/**/*.blade.php';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+
 
 @theme {
     --animate-fade-out: fade-out 4s ease-in-out forwards !important;
@@ -326,7 +328,7 @@ input[type="date"]:valid {
 }
 
 :root {
-  --bg-color: #ffffff;
+  --bg-color: #ededee;
   --text-color: #000000;
 }
 
@@ -337,7 +339,7 @@ input[type="date"]:valid {
 
 body {
     font-family: 'Instrument Sans', sans-serif;
-    background-color: var(--bg-color);
+    background-color: #ededee;
     color: var(--text-color);
     transition: background-color 0.3s ease;
 }
@@ -375,6 +377,39 @@ html {
 
 .dark-mode-filter .dark-toggle {
     fill: #000;
+}
+
+.dark-mode-filter .card {
+    background: #e0e0e0;
+}
+
+.dark-mode-filter trix-editor {
+    background: #ccc;
+}
+
+.dark-mode-filter input {
+    background: #ccc;
+}
+
+.dark-mode-filter .shadow-sm {
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.5);
+}
+
+.dark-mode-filter a[aria-label] {
+    background: #eee !important;
+}
+
+.dark-mode-filter span[aria-disabled] > span {
+    background: #eee !important;
+}
+
+.dark-mode-filter .searchBackground {
+    background: #eee !important;
+}
+
+.dark-mode-filter .btn-primary {
+    transition-duration: 0s;
+    color: #000;
 }
 
 .dark-mode-filter .topbar-profile  {
@@ -417,3 +452,8 @@ trix-editor {
     display: none !important;
 }
 
+[data-floating="data-floating"] {
+    margin-top: -12px !important; /* Adjust this number to close the gap */
+}
+
+[x-cloak] { display: none !important; }

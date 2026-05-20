@@ -72,6 +72,10 @@
                         @endif
                     </div>
                 </div>
+                <div class="flex gap-4 mt-2">
+                    <p><strong>{{ $user->following_count }}</strong> <span>Following</span></p>
+                    <p><strong>{{ $user->followers_count }}</strong> Followers</p>
+                </div>
                 <div class="mt-4 flex items-center justify-end"></div>
             </div>
             <h2 id="chirps" class="text-2xl font-bold my-2">Chirps</h2>

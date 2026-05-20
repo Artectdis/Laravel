@@ -26,6 +26,6 @@ $performSearch = function () {
     </div>
     <!-- Input Field -->
     <input type="text" wire:model="search" wire:keydown.enter="performSearch"
-        class="w-full pl-10 pr-4 py-2 border border-[#E4E4E5] rounded-full text-gray-600 placeholder-gray-400 focus:placeholder-gray-600 focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+        class="searchBackground w-full pl-10 pr-4 py-2 border border-[#E4E4E5] rounded-full text-gray-600 placeholder-gray-400 focus:placeholder-gray-600 focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
         placeholder="Search...">
 </div>

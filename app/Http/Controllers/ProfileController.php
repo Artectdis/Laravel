@@ -46,14 +46,15 @@ class ProfileController extends Controller
     {
         $chirps = Auth::user()->chirps()->get();
         $user = Auth::user();
-        return view('profile', compact('chirps', 'user'));
+        $follows = $user->following()->get(); 
+        return view('profile', compact('chirps', 'user', 'follows'));
     }
         
     public function showProfile(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::withCount(['followers', 'following'])->findOrFail($id);
         $chirps = $user->chirps()->get();
-        $editPermission = ($user == Auth::user());
+        $editPermission = ($user->id == Auth::id());
         return view('profileView', compact('chirps', 'user', 'editPermission'));
     }
 

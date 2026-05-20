@@ -10,8 +10,8 @@ state(['query' => fn() => request('query')]);
 
 // 3. Perform the database search
 $users = computed(function () {
-    return User::where('name', 'like', "%{$this->query}%")
-        ->orWhere('email', 'like', "%{$this->query}%")
+    return User::where('name', 'ilike', "%{$this->query}%")
+        ->orWhere('email', 'ilike', "%{$this->query}%")
         ->paginate(10);
 });
 ?>

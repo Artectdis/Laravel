@@ -104,7 +104,7 @@
                 </div>
                 <div class="mt-4 flex items-center justify-end"></div>
             </div>
-            <div class><button type="submit" class="btn btn-primary btn-sm float-right">Save</button></div>
+            <div class><button type="submit" class="btn btn-primary btn-sm float-right duration-0">Save</button></div>
             </form>
             <h2 id="chirps" class="text-2xl font-bold mt-12 mb-2">Your Chirps</h2>
             <hr class="border-gray-300 mb-4" />
@@ -115,6 +115,30 @@
                     <p class="text-gray-500 text-lg">No chirps have been created yet.</p>
                 @endforelse
             </div>
+            <h2 id="chirps" class="text-2xl font-bold mt-12 mb-2">Following</h2>
+            <hr class="border-gray-300 mb-4" />
+            @forelse ($follows as $follow)
+                <a href="/profile/{{ $follow->id }}" class="group">
+                    <div
+                        class="card p-6 bg-base-100 space-x-3 mb-4 group-hover:!bg-gray-300 !transition-all duration-500 ease-in-out">
+                        <div class="flex flex-row items-stretch gap-2 h-[60px]">
+                            <div class="avatar">
+                                <div class="aspect-square h-full rounded-full">
+                                    <img loading="lazy" src="{{ $follow->avatar_url }}"
+                                        alt="{{ $follow->name }}'s avatar" class="rounded-full" />
+                                </div>
+                            </div>
+
+                            <div class="ml-4 rounded-lg">
+                                <h1 class="text-3xl font-bold text-gray-800">{{ $follow->name }}</h1>
+                                <p class="text-gray-500">{{ $follow->email }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            @empty
+                <p class="text-gray-500 text-lg">No users found matching your search.</p>
+            @endforelse
 
             <h2 id="settings" class="text-2xl font-bold mt-12 mb-2">Your Settings</h2>
             <hr class="border-gray-300 mb-4" />

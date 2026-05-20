@@ -14,9 +14,12 @@ class ChirpController extends Controller
      */
     public function index()
     {
-        $chirps = Chirp::with('user')->latest()->take(10)->get();;
+        $chirps = Chirp::with('user:id,name,email,email_verified_at')->latest()->take(10)->get();
 
-    return view('home', ['chirps' => $chirps]);
+        $oldMessage = old('message', '');
+        $oldMessageLength = mb_strlen(trim(strip_tags(str_replace('&nbsp;', ' ', $oldMessage))));
+
+    return view('home', compact('chirps', 'oldMessageLength'));
     }
 
     /**
@@ -32,15 +35,25 @@ class ChirpController extends Controller
      */
     public function store(Request $request)
     {
-        $plainTextMessage = trim(strip_tags($request->message));
-        $request->merge(['message_count' => mb_strlen($plainTextMessage)]);
+        $decodedMessage = str_replace('&nbsp;', ' ', $request->message);
+        $plainTextMessage = trim(strip_tags($decodedMessage)); 
+        $plainTextLength = mb_strlen($plainTextMessage);
+        $request->merge(['message_count' => $plainTextLength]);
+
+        if ($plainTextLength < 5) {
+        return back()
+            ->withInput()
+            ->withErrors([
+                'message' => 'Your chirp is too short! Make it at least 5 characters. 🐤',
+            ]);
+        }
+        $request->merge(['message_count' => $plainTextLength]);
         $validated = $request->validate([
             'message' => 'required|string',
-            'message_count' => 'numeric|max:255|min:5',
+            'message_count' => 'numeric|max:255',
         ], [
             'message.required' => 'Please write something to chirp! 🐤',
             'message_count.max' => 'Your chirp is too long! Keep it under 255 characters. 🐤',
-            'message_count.min' => 'Your chirp is too short! Make it at least 5 characters. 🐤'
         ]);
 
         auth()->user()->chirps()->create($validated);
@@ -63,8 +76,9 @@ class ChirpController extends Controller
     public function edit(Chirp $chirp)
     {
         $this->authorize('update', $chirp);
+        $oldMessageLength = mb_strlen(trim(strip_tags(str_replace('&nbsp;', ' ', $chirp->message))));
 
-        return view('chirps.edit', compact('chirp'));
+        return view('chirps.edit', compact('chirp', 'oldMessageLength'));
     }
 
     /**
