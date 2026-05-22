@@ -349,8 +349,13 @@ body {
   filter: invert(100%) hue-rotate(180deg);
 }
 
+.dark-mode-filter .light-toggle {
+    fill: #ff0 !important;
+    filter: invert(1) hue-rotate(180deg) !important;
+}
+
 /* Re-invert images and videos so they appear normal */
-.dark-mode-filter img, .dark-mode-filter video, .dark-mode-filter iframe, .dark-mode-filter picture {
+.dark-mode-filter img, .dark-mode-filter video, .dark-mode-filter iframe, .dark-mode-filter picture{
     filter: invert(100%) hue-rotate(180deg);
 }
 
@@ -378,6 +383,7 @@ html {
 .dark-mode-filter .dark-toggle {
     fill: #000;
 }
+
 
 .dark-mode-filter .card {
     background: #e0e0e0;
@@ -453,7 +459,16 @@ trix-editor {
 }
 
 [data-floating="data-floating"] {
-    margin-top: -12px !important; /* Adjust this number to close the gap */
+    margin-top: -0px !important; /* Adjust this number to close the dropdown gap */
 }
 
 [x-cloak] { display: none !important; }
+
+.trix-reply-editor::before {
+    @apply flex items-center h-full;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+@custom-variant dark (&:where(.dark-mode-filter, .dark-mode-filter *));

@@ -13,7 +13,7 @@ class Chirp extends Model
     use HasRichText;
     protected $richTextAttributes = ['content'];
     protected $fillable = [
-        'message',
+        'message', 'parent_id'
     ];
 
     public function user(): BelongsTo
@@ -25,6 +25,17 @@ class Chirp extends Model
     {
         return $this->morphMany(Like::class, 'likeable');
     }
+
+    public function replies()
+    {
+        return $this->hasMany(Chirp::class, 'parent_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Chirp::class, 'parent_id');
+    }
+    
     public function userLike()
     {
         return $this->morphMany(Like::class, 'likeable')

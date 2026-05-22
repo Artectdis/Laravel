@@ -1,5 +1,5 @@
 <x-layout>
-    <main class="p-8">
+    <div class="max-w-2xl mx-auto">
         <div>
             <div class="flex flex-col gap-4 mt-4">
                 <div class="flex flex-row justify-between">
@@ -12,7 +12,8 @@
                 <div>
                     <div class="min-w-0">
                         <div class="flex flex-row gap-2 items-center">
-                            <h1 class="text-3xl font-bold break-words self-center w-auto text-wrap">{{ $user->name }}
+                            <h1 class="text-3xl font-bold break-words self-center w-auto text-wrap">
+                                {{ $user->name }}
                             </h1>
                             @if ($user->email_verified_at)
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -85,4 +86,6 @@
                     <x-chirp :chirp="$chirp" />
                 @endforeach
             </div>
+        </div>
+    </div>
 </x-layout>

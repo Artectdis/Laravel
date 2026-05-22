@@ -10,8 +10,8 @@
         <h1 class="text-3xl font-bold">Latest Chirps</h1>
 
         <!-- Chirp Form -->
-        <div class="card bg-base-100 shadow mt-8 min-h-[222px]">
-            <div class="card-body">
+        <div class="card bg-base-100 shadow mt-8 min-h-[104px]">
+            <div class="card-body !py-0 justify-center">
                 <form method="POST" action="/chirps" novalidate>
                     @csrf
                     <div class="form-control w-full">
@@ -20,36 +20,44 @@
                         <div x-data="{
                             content: '{{ addslashes(old('message', '')) }}',
                             count: {{ $oldMessageLength ?? 0 }},
-                            focused: false
+                            focused: {{ old('message') ? 'true' : 'false' }}
                         }" @focusin="focused = true" @focusout="focused = false" x-cloak>
 
-                            <div x-show="focused" x-transition x-cloak class="mb-2">
+                            <div x-show="focused || count > 0" x-transition x-cloak class="mt-2">
                                 <trix-toolbar id="chirp_toolbar"></trix-toolbar>
                             </div>
 
-                            <div class="min-h-[150px]">
+                            <div class="transition-all duration-200 ease-in-out">
+
                                 <trix-editor input="message_hidden" toolbar="chirp_toolbar"
                                     placeholder="What's on your mind?" @trix-focus="focused = true"
-                                    @trix-blur="focused = false"
-                                    @trix-change="count = $event.target.editor.getDocument().toString().trim().length"
-                                    class="trix-content textarea textarea-bordered h-auto min-h-[150px] w-full @error('message') textarea-error @enderror">
+                                    @trix-blur="if(count === 0) focused = false"
+                                    @trix-change="count = $event.target.editor.getDocument().toString().length - 1"
+                                    class="!pt-5 !pl-4 trix-reply-editor trix-content textarea align-middle textarea-bordered w-full transition-all duration-200
+                        {{ $errors->has('message') ? 'textarea-error' : '' }}"
+                                    :class="focused ?
+                                        'rounded-lg h-auto !min-h-[8rem] focus:outline-none focus:ring-2 focus:ring-blue-200 [.dark-mode-filter_&]:focus:ring-blue-600' :
+                                        '!min-h-[4rem] overflow-hidden py-2 leading-[28px]'">
                                 </trix-editor>
                             </div>
 
-                            @error('message')
-                                <div class="label">
-                                    <span class="label-text-alt text-error">{{ $message }}</span>
-                                </div>
-                            @enderror
 
-                            <div class="flex justify-between items-center mt-2">
-                                <div x-show="focused" id="char-count" class="text-sm text-gray-500"
+                            @if ($errors->has('message') || $errors->has('message_count'))
+                                <div class="label">
+                                    <span class="label-text-alt text-error">
+                                        {{ $errors->first('message') ?: $errors->first('message_count') }}
+                                    </span>
+                                </div>
+                            @endif
+
+                            <div class="flex justify-between items-center">
+                                <div x-show="focused || count > 0" id="char-count" class="-mt-2 text-sm text-gray-500"
                                     :class="{ 'text-red-600 font-bold': count >= 255 }">
                                     <span x-text="count"></span><span>/255</span>
                                 </div>
 
-                                <div class="flex items-center justify-end ml-auto">
-                                    <button type="submit" class="btn btn-primary btn-sm duration-0">
+                                <div x-show="focused || count > 0" class="flex items-center mt-2 justify-end ml-auto">
+                                    <button type="submit" class="btn btn-primary btn-sm duration-0 mb-2">
                                         Chirp
                                     </button>
                                 </div>

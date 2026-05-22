@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use function Livewire\Volt\{state, mount};
+use Illuminate\Support\Str;
 
 state(['user', 'isFollowing']);
 
@@ -17,6 +18,4 @@ $toggleFollow = function () {
 
 ?>
 
-<div>
-    <x-ts-dropdown.items wire:click="toggleFollow" :text="($isFollowing ? 'Unfollow ' : 'Follow ') . $user->name" />
-</div>
+<div><x-ts-dropdown.items wire:click="toggleFollow" :text="($isFollowing ? 'Unfollow ' : 'Follow ') . '<strong>&nbsp' . Str::limit($user->name, 18) . '</strong>'" /></div>

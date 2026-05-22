@@ -14,12 +14,11 @@ class ChirpController extends Controller
      */
     public function index()
     {
-        $chirps = Chirp::with('user:id,name,email,email_verified_at')->latest()->take(10)->get();
 
         $oldMessage = old('message', '');
         $oldMessageLength = mb_strlen(trim(strip_tags(str_replace('&nbsp;', ' ', $oldMessage))));
 
-    return view('home', compact('chirps', 'oldMessageLength'));
+    return view('home', compact('oldMessageLength'));
     }
 
     /**
@@ -34,40 +33,32 @@ class ChirpController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $decodedMessage = str_replace('&nbsp;', ' ', $request->message);
-        $plainTextMessage = trim(strip_tags($decodedMessage)); 
-        $plainTextLength = mb_strlen($plainTextMessage);
-        $request->merge(['message_count' => $plainTextLength]);
+{
+    $plainText = trim(strip_tags(str_replace('&nbsp;', ' ', $request->message)));
+    $request->merge(['message_count' => mb_strlen($plainText)]);
+    $validated = $request->validate([
+        'message' => 'required|string',
+        'message_count' => 'numeric|min:5|max:255',
+        'parent_id' => 'nullable|exists:chirps,id'
+    ], [
+        'message.required' => 'Please write something to chirp! 🐤',
+        'message_count.min' => 'Your chirp is too short! Make it at least 5 characters. 🐤',
+        'message_count.max' => 'Your chirp is too long! Keep it under 255 characters. 🐤',
+    ]);
 
-        if ($plainTextLength < 5) {
-        return back()
-            ->withInput()
-            ->withErrors([
-                'message' => 'Your chirp is too short! Make it at least 5 characters. 🐤',
-            ]);
-        }
-        $request->merge(['message_count' => $plainTextLength]);
-        $validated = $request->validate([
-            'message' => 'required|string',
-            'message_count' => 'numeric|max:255',
-        ], [
-            'message.required' => 'Please write something to chirp! 🐤',
-            'message_count.max' => 'Your chirp is too long! Keep it under 255 characters. 🐤',
-        ]);
+    auth()->user()->chirps()->create($validated);
 
-        auth()->user()->chirps()->create($validated);
+    return back()->with('success', 'Chirp created successfully!');
+}
 
-        return redirect('/')->with('success', 'Chirp created successfully!');
-
-    }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Chirp $chirp)
     {
-        //
+        $chirp->load(['replies.user', 'replies.replies']);
+        return view('chirps.show', compact('chirp'));
     }
 
     /**

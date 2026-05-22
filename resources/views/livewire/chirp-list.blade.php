@@ -18,11 +18,12 @@ $loadMore = function () {
 
     $perPage = 20; // Load 20 at a time — fewer round trips for 100 chirps
 
-    $query = Chirp::with('user:id,name,email,avatar') // Only needed user columns
-        ->withCount('likes') // Eager load likes count
-        ->with(['userLike' => fn($q) => $q->where('user_id', auth()->id())]) // Eager load current user's like if exists
-        ->select('id', 'user_id', 'message', 'created_at', 'updated_at') // No table prefix needed here
-        ->latest('id'); // Relies on the PK index — fastest possible ordering
+    $query = Chirp::whereNull('parent_id') // <--- ADD THIS LINE
+        ->with('user:id,name,email,avatar,email_verified_at')
+        ->withCount(['likes', 'replies']) // Eager load reply count too!
+        ->with(['userLike' => fn($q) => $q->where('user_id', auth()->id())])
+        ->select('id', 'user_id', 'message', 'created_at', 'updated_at', 'parent_id')
+        ->latest('id');
 
     // Keyset: no OFFSET, no cursor encoding overhead, just a WHERE on an indexed column
     if ($this->lastId !== null) {

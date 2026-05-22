@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\Login;
 use Livewire\Volt\Volt;
 
 Route::get('/', [ChirpController::class, 'index']);
+Route::get('/chirps/{chirp}', [ChirpController::class, 'show']);
 Route::get('/profile/{id}', [ProfileController::class, 'showProfile']);
 Volt::route('/search/users', 'searchUsers');
 Volt::route('/search/chirps', 'searchChirps');

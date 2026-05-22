@@ -1,32 +1,35 @@
 @props(['chirp'])
 
-<div class="card bg-base-100 group">
+<div class="card bg-base-100 group cursor-pointer relative hover:!bg-gray-200 !transition-colors !duration-500 !ease-in-out"
+    onclick="if(!window.getSelection().toString()) { Livewire.navigate('/chirps/{{ $chirp->id }}') }">
     <div class="card-body">
         <div class="flex space-x-3">
-            @if ($chirp->user)
-                <div class="avatar">
-                    <a href="/profile/{{ $chirp->user->id }}">
-                        <div class="size-10 rounded-full">
-                            <img loading="lazy" src="{{ $chirp->user->avatar_url }}"
-                                alt="{{ $chirp->user->name }}'s avatar" class="rounded-full" />
-                        </div>
-                    </a>
-                </div>
-            @else
+            @php $profileUrl = $chirp->user ? "/profile/{$chirp->user->id}" : "#"; @endphp
+
+            <div class="avatar relative z-20">
+                <a href="{{ $profileUrl }}" onclick="event.stopPropagation()">
+                    <div class="size-10 rounded-full">
+                        <img loading="lazy" src="{{ $chirp->user->avatar_url }}" alt="{{ $chirp->user->name }}'s avatar"
+                            class="rounded-full" />
+                    </div>
+                </a>
+            </div>
+            {{-- @else
                 <div class="avatar placeholder">
                     <div class="size-10 rounded-full">
                         <img src="https://avatars.laravel.cloud/f61123d5-0b27-434c-a4ae-c653c7fc9ed6?vibe=stealth"
                             alt="Anonymous User" class="rounded-full" />
                     </div>
                 </div>
-            @endif
+            @endif --}}
 
             <div class="min-w-0 flex-1">
                 <div class="flex justify-between w-full">
                     <div class="flex gap-1 flex-wrap">
-                        <span class="text-sm font-semibold">
+                        <a class="text-sm font-semibold hover:underline !text-black" href="{{ $profileUrl }}"
+                            onclick="event.stopPropagation()">
                             {{ $chirp->user ? $chirp->user->name : 'Anonymous' }}
-                        </span>
+                        </a>
                         @if ($chirp->user?->email_verified_at)
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
                                 class="size-4 hover:text-[#4A40A9] hover:scale-110 origin-center text-[#4697E7] transition-all duration-200 ease-in-out mt-0.5 flex-shrink-0">
@@ -36,7 +39,6 @@
                                 <title>Verified</title>
                             </svg>
                         @endif
-                        </span>
                         <span class="text-base-content/60">·</span>
                         <span class="text-sm text-base-content/60">{{ $chirp->created_at->diffForHumans() }}</span>
                         @if ($chirp->updated_at->gt($chirp->created_at->addSeconds(5)))
@@ -44,25 +46,27 @@
                         @endif
                     </div>
                     <!-- Only show edit/delete if user owns the chirp -->
-                    <x-ts-dropdown icon="ellipsis-horizontal" :offset="-100" static>
-                        @if (auth()->check() && auth()->id() === $chirp->user_id)
-                            <a href="/chirps/{{ $chirp->id }}/edit" target="_blank">
-                                <x-ts-dropdown.items text="Edit" />
-                            </a>
-                            <x-ts-dropdown.items separator
-                                x-on:click="if (confirm('Are you sure you want to delete this chirp? ‼️🐥‼️')) {$refs.deleteForm{{ $chirp->id }}.submit()}">
-                                <span class="text-red-400">Delete</span>
-                            </x-ts-dropdown.items>
+                    <div class="relative z-20" onclick="event.stopPropagation()">
+                        <x-ts-dropdown icon="ellipsis-horizontal" static>
+                            @if (auth()->check() && auth()->id() === $chirp->user_id)
+                                <a href="/chirps/{{ $chirp->id }}/edit" target="_blank">
+                                    <x-ts-dropdown.items text="Edit" />
+                                </a>
+                                <x-ts-dropdown.items separator
+                                    x-on:click="if (confirm('Are you sure you want to delete this chirp? ‼️🐥‼️')) {$refs.deleteForm{{ $chirp->id }}.submit()}">
+                                    <span class="text-red-400">Delete</span>
+                                </x-ts-dropdown.items>
 
-                            <form x-ref="deleteForm{{ $chirp->id }}" method="POST"
-                                action="/chirps/{{ $chirp->id }}" class="hidden">
-                                @csrf
-                                @method('DELETE')
-                            </form>
-                        @else
-                            <livewire:follow :user="$chirp->user_id" />
-                        @endif
-                    </x-ts-dropdown>
+                                <form x-ref="deleteForm{{ $chirp->id }}" method="POST"
+                                    action="/chirps/{{ $chirp->id }}" class="hidden">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                            @else
+                                <livewire:follow :user="$chirp->user_id" />
+                            @endif
+                        </x-ts-dropdown>
+                    </div>
                     {{-- <div class="flex gap-1">
                             <a href="/chirps/{{ $chirp->id }}/edit" class="btn btn-ghost btn-xs">
                                 Edit
@@ -82,8 +86,8 @@
                     <div class="flex-1">
                         @safeHtml($chirp->message)
                     </div>
-                    <div
-                        class="flex flex-col justify-end !pl-4 ml-4 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
+                    <div onclick="event.stopPropagation()"
+                        class="relative z-20 flex flex-col justify-end !pl-4 ml-4 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
                         <livewire:like :chirp="$chirp" />
                     </div>
                 </div>
