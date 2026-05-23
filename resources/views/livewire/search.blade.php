@@ -14,7 +14,7 @@ $performSearch = function () {
 };
 ?>
 
-<div class="relative text-gray-400 focus-within:text-gray-600 w-full max-w-[30%]">
+<div class="search-div relative text-gray-400 focus-within:text-gray-600 w-full max-w-[30%]">
     <!-- Icon Container -->
     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <!-- Removed absolute from here -->
