@@ -345,13 +345,13 @@ body {
 }
 
 
-.dark-mode-filter {
-  filter: invert(100%) hue-rotate(180deg);
+.dark-mode-filter main {
+    filter: invert(100%) hue-rotate(180deg);
 }
 
 .dark-mode-filter .light-toggle {
-    fill: #ff0 !important;
-    filter: invert(1) hue-rotate(180deg) !important;
+    display: none !important;
+    filter: none; isolation: isolate;
 }
 
 /* Re-invert images and videos so they appear normal */
@@ -378,10 +378,6 @@ html {
 
 html {
   scrollbar-color: #888 #fff;
-}
-
-.dark-mode-filter .dark-toggle {
-    fill: #000;
 }
 
 
@@ -416,14 +412,6 @@ html {
 .dark-mode-filter .btn-primary {
     transition-duration: 0s;
     color: #000;
-}
-
-.dark-mode-filter .topbar-profile  {
-    background: #eee;
-}
-
-.dark-mode-filter .invert-g * {
-    filter: brightness(0) !important;
 }
 
 html.dark-mode-filter {
@@ -472,3 +460,111 @@ trix-editor {
 }
 
 @custom-variant dark (&:where(.dark-mode-filter, .dark-mode-filter *));
+
+/* ── NAVBAR DARK MANUAL ── */
+.dark-mode-filter .navbar {
+    background: #1d1d1d;
+    border-bottom-color: rgba(255,255,255,0.08);
+}
+
+/* Search bar */
+.dark-mode-filter .searchBackground {
+    background: #2a2a2a !important;
+    color: #e0e0e0;
+}
+
+/* Moon icon */
+.dark-mode-filter .dark-toggle {
+    fill: #e0e0e0;
+}
+.dark-mode-filter .dark-toggle:hover {
+    fill: #4697E7;
+}
+
+/* Sun icon — pure yellow, no filter chain */
+.dark-mode-filter .light-toggle {
+    fill: #ffff00;
+}
+.dark-mode-filter .light-toggle:hover {
+    fill: #00ffff;
+}
+
+/* Profile pill */
+.dark-mode-filter .topbar-profile {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    ring-color: rgba(255,255,255,0.1);
+}
+.dark-mode-filter .topbar-profile:hover {
+    background: #333;
+}
+
+/* Logout / Sign In / Sign Up buttons */
+.dark-mode-filter .navbar .btn-ghost {
+    color: #e0e0e0;
+    border-color: rgba(255,255,255,0.12);
+}
+.dark-mode-filter .navbar .btn-ghost:hover {
+    background: rgba(255,255,255,0.06);
+}
+.dark-mode-filter .navbar .btn-primary {
+    background: #5580d2;
+    color: #fff;
+}
+
+/* Logo text (Chirper wordmark) */
+.dark-mode-filter .invert-g * {
+    filter: brightness(10) !important;
+}
+
+/* Body + page background */
+.dark-mode-filter body {
+    background-color: #111 !important;
+}
+
+/* Footer */
+.dark-mode-filter footer {
+    background: #111;
+    color: #aaa;
+}
+.dark-mode-filter footer svg {
+    color: #444;
+}
+
+/* Search border */
+.dark-mode-filter .navbar input[type="search"],
+.dark-mode-filter .navbar input[type="text"] {
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Profile pill — remove white ring */
+.dark-mode-filter .topbar-profile {
+    ring: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+.dark-mode-filter .topbar-profile:hover {
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.15) !important;
+}
+
+/* Profile picture — re-invert since nav is outside the filter */
+.dark-mode-filter .nav-avatar {
+    filter: invert(0) hue-rotate(0deg) !important;
+}
+
+/* Moon/Sun swap via dark-mode-filter instead of Tailwind dark: */
+.dark-mode-filter .mode-moon {
+    display: none;
+}
+.dark-mode-filter .light-toggle {
+    display: block !important;
+    fill: #fff;
+}
+.dark-mode-filter .light-toggle:hover {
+    fill: #ff0;
+}
+.light-toggle {
+    display: none;
+}
