@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="grid min-h-screen grid-cols-[280px_1fr]">
+    <div class="profile-page grid min-h-screen grid-cols-[280px_1fr]">
 
         <aside class="sticky card top-0 h-screen bg-[#f7f7f8] p-6 border-r border-gray-200">
             <nav class="space-y-2">
@@ -35,10 +35,10 @@
             </nav>
         </aside>
 
-        <main class="p-8">
+        <div class="p-8">
 
             <div>
-                <div><a class="flex flex-row w-fit gap-2 !text-gray-500 items-center text-sm -mt-6 mb-8 hover:!text-blue-600 transition-color duration-500 ease-in-out"
+                <div><a class="flex flex-row w-fit gap-2 !text-gray-500 items-center text-sm -mt-6 mb-8 hover:!text-blue-600 transition-colors duration-500 ease-in-out"
                         href="javascript:void(0)" {{-- cool way to back 1 or 2x depending on saved, while staying fast --}}
                         onclick="window.location.search.includes('saved=true') ? window.history.go(-2) : window.history.back()"><svg
                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
@@ -52,10 +52,10 @@
                 <div class="grid grid-cols-[2fr_1fr] gap-4 mt-2">
                     <div class="min-w-0">
                         <h1 class="text-3xl font-bold break-words text-wrap w-full">{{ $user->name }}</h1>
-                        <p>Welcome to your profile page!</p>
+                        <p>Welcome to your settings!</p>
                     </div>
                     <div class="flex justify-end items-center gap-4">
-                        <form action="/profile/avatar" method="POST" enctype="multipart/form-data">
+                        <form action="/settings/avatar" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PATCH')
 
@@ -69,15 +69,15 @@
                                 Change
                             </button>
                         </form><img loading="lazy" src="{{ $user->avatar_url }}"
-                            class="size-20 rounded-full justify-self-end self-top outline-white outline-3">
+                            class="size-20 rounded-full justify-self-end self-start outline-white outline-3">
                     </div>
                 </div>
             </div>
             <h2 id="profile" class="text-2xl font-bold mt-4">Your Profile</h2>
             <hr class="border-gray-300 mb-4" />
-            <div class="mt">
+            <div>
                 <div class="grid grid-cols-2 gap-4">
-                    <form method="POST" class="contents" action="/profile/save/{{ $user->id }}" novalidate="">
+                    <form method="POST" class="contents" action="/settings/save/{{ $user->id }}" novalidate="">
                         @csrf
                         @method('PUT')
                         <div>Name: <input name="name" class="input input-bordered w-full resize-none "
@@ -117,28 +117,54 @@
             </div>
             <h2 id="chirps" class="text-2xl font-bold mt-12 mb-2">Following</h2>
             <hr class="border-gray-300 mb-4" />
-            @forelse ($follows as $follow)
-                <a href="/profile/{{ $follow->id }}" class="group">
-                    <div
-                        class="card p-6 bg-base-100 space-x-3 mb-4 group-hover:!bg-gray-300 !transition-all duration-500 ease-in-out">
-                        <div class="flex flex-row items-stretch gap-2 h-[60px]">
-                            <div class="avatar">
-                                <div class="aspect-square h-full rounded-full">
-                                    <img loading="lazy" src="{{ $follow->avatar_url }}"
-                                        alt="{{ $follow->name }}'s avatar" class="rounded-full" />
-                                </div>
-                            </div>
+            <div class="flex flex-col gap-2">
+                @forelse ($follows as $follow)
+                    <div class="card bg-base-100 cursor-pointer relative hover:!bg-gray-200 !transition-colors !duration-500 !ease-in-out"
+                        onclick="if(!window.getSelection().toString()) { Livewire.navigate('/profile/{{ $follow->id }}') }">
+                        <div class="card-body">
+                            <div class="flex space-x-3">
+                                @php $profileUrl = $follow->name ? "/profile/{$follow->id}" : "#"; @endphp
 
-                            <div class="ml-4 rounded-lg">
-                                <h1 class="text-3xl font-bold text-gray-800">{{ $follow->name }}</h1>
-                                <p class="text-gray-500">{{ $follow->email }}</p>
+                                <div class="avatar relative z-20">
+                                    <a href="{{ $profileUrl }}" onclick="event.stopPropagation()">
+                                        <div class="size-10 rounded-full">
+                                            <img loading="lazy" src="{{ $follow->avatar_url }}"
+                                                alt="{{ $follow->name }}'s avatar" class="rounded-full" />
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex justify-between w-full">
+                                        <div class="flex gap-1 flex-wrap">
+                                            <a class="text-sm font-semibold hover:underline !text-black"
+                                                href="{{ $profileUrl }}" onclick="event.stopPropagation()">
+                                                {{ $follow->name }}
+                                            </a>
+                                            @if ($follow?->email_verified_at)
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
+                                                    fill="currentColor"
+                                                    class="size-4 hover:text-[#4A40A9] hover:scale-110 origin-center text-[#4697E7] transition-all duration-200 ease-in-out mt-0.5 flex-shrink-0">
+                                                    <path fill-rule="evenodd"
+                                                        d="M15 8c0 .982-.472 1.854-1.202 2.402a2.995 2.995 0 0 1-.848 2.547 2.995 2.995 0 0 1-2.548.849A2.996 2.996 0 0 1 8 15a2.996 2.996 0 0 1-2.402-1.202 2.995 2.995 0 0 1-2.547-.848 2.995 2.995 0 0 1-.849-2.548A2.996 2.996 0 0 1 1 8c0-.982.472-1.854 1.202-2.402a2.995 2.995 0 0 1 .848-2.547 2.995 2.995 0 0 1 2.548-.849A2.995 2.995 0 0 1 8 1c.982 0 1.854.472 2.402 1.202a2.995 2.995 0 0 1 2.547.848c.695.695.978 1.645.849 2.548A2.996 2.996 0 0 1 15 8Zm-3.291-2.843a.75.75 0 0 1 .135 1.052l-4.25 5.5a.75.75 0 0 1-1.151.043l-2.25-2.5a.75.75 0 1 1 1.114-1.004l1.65 1.832 3.7-4.789a.75.75 0 0 1 1.052-.134Z"
+                                                        clip-rule="evenodd" />
+                                                    <title>Verified</title>
+                                                </svg>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="w-full trix-content flex">
+                                        <div class="flex-1 text-sm text-base-content/60">
+                                            {{ $follow->email }}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </a>
-            @empty
-                <p class="text-gray-500 text-lg">No users found matching your search.</p>
-            @endforelse
+                @empty
+                    <p class="text-gray-500 text-lg">No users have been followed yet.</p>
+                @endforelse
+            </div>
 
             <h2 id="settings" class="text-2xl font-bold mt-12 mb-2">Your Settings</h2>
             <hr class="border-gray-300 mb-4" />
@@ -165,7 +191,7 @@
                     Notifications <input type="checkbox" class="toggle toggle-primary ml-auto" checked="checked" />
                 </div>
             </div>
-            <form action="/profile/delete/{{ $user->id }}" method="POST">
+            <form action="/settings/delete/{{ $user->id }}" method="POST">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn hover:bg-red-500 bg-white mt-12 hover:text-white text-red-500"
@@ -181,8 +207,7 @@
                 </button>
                 <div class="my-96"> </div>
             </form>
-    </div>
-    </main>
+        </div>
     </div>
 
     <script>

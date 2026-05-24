@@ -35,6 +35,11 @@ class Chirp extends Model
     {
         return $this->belongsTo(Chirp::class, 'parent_id');
     }
+
+    public function parentUser()
+    {
+        return $this->parent()->with('user'); 
+    }
     
     public function userLike()
     {

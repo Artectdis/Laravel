@@ -51,12 +51,28 @@ class ProfileController extends Controller
     }
         
     public function showProfile(string $id)
-    {
-        $user = User::withCount(['followers', 'following'])->findOrFail($id);
-        $chirps = $user->chirps()->get();
-        $editPermission = ($user->id == Auth::id());
-        return view('profileView', compact('chirps', 'user', 'editPermission'));
-    }
+{
+    $user = User::with(['chirps'])->withCount(['followers', 'following'])->findOrFail($id);
+
+    $chirps = $user->chirps()
+        ->whereNull('parent_id')
+        ->paginate(5, ['*'], 'chirps_page')
+        ->appends([
+            'tab' => 'chirps',
+            'replies_page' => request('replies_page') // Keep the other tab's page
+        ]);
+
+    $replies = $user->chirps()
+        ->whereNotNull('parent_id')
+        ->paginate(5, ['*'], 'replies_page')
+        ->appends([
+            'tab' => 'replies',
+            'chirps_page' => request('chirps_page') // Keep the other tab's page
+        ]);
+
+    $editPermission = ($user->id == Auth::id());
+    return view('profileView', compact('chirps', 'replies', 'user', 'editPermission'));
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -80,7 +96,7 @@ class ProfileController extends Controller
         // grab user and update
         $user = User::findOrFail($id);
         $user->update($data);
-        return redirect('/profile?saved=true')->with('success', 'Profile updated successfully!');
+        return redirect('/settings?saved=true')->with('success', 'Profile updated successfully!');
     }
 
      public function updateAvatar(Request $request)
@@ -113,7 +129,7 @@ class ProfileController extends Controller
             'avatar' => $filename
         ]);
 
-        return redirect('/profile?saved=true')->with('success', 'Profile picture updated!');
+        return redirect('/settings?saved=true')->with('success', 'Profile picture updated!');
     }
 
 

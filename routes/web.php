@@ -20,10 +20,10 @@ Route::middleware('auth')->group(function() {
     Route::get('/chirps/{chirp}/edit', [ChirpController::class, 'edit']);
     Route::put('/chirps/{chirp}', [ChirpController::class, 'update']);
     Route::delete('/chirps/{chirp}', [ChirpController::class, 'destroy']);
-    Route::put('/profile/save/{id}', [ProfileController::class, 'update']);
-    Route::patch('/profile/avatar', [ProfileController::class, 'updateAvatar']);
-    Route::delete('/profile/delete/{id}', [ProfileController::class, 'destroy']);
-    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/settings/save/{id}', [ProfileController::class, 'update']);
+    Route::patch('/settings/avatar', [ProfileController::class, 'updateAvatar']);
+    Route::delete('/settings/delete/{id}', [ProfileController::class, 'destroy']);
+    Route::get('/settings', [ProfileController::class, 'show']);
 });
 
 // REGISTER ROUTES

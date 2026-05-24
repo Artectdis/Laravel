@@ -8,10 +8,14 @@ state(['user', 'isFollowing']);
 
 mount(function (User $user) {
     $this->user = $user; // is the person im following ($user) followed by me before?
-    $this->isFollowing = auth()->user()->following()->where('following_id', $user->id)->exists();
+    $this->isFollowing = auth()->user()?->following()->where('following_id', $user->id)->exists() ?? false;
 });
 
 $toggleFollow = function () {
+    if (auth()->guest()) {
+        return $this->redirect('/login');
+    }
+
     auth()->user()->following()->toggle($this->user->id);
     $this->isFollowing = !$this->isFollowing;
 };

@@ -1,6 +1,37 @@
 <x-layout>
     <div class="max-w-2xl mx-auto">
         <div class="card p-4">
+            @if ($chirp->parent_id)
+                <a href="/chirps/{{ $chirp->parent->id }}"
+                    class="bg-gray-50 p-2 mb-4 border-b-1 border-gray-200 rounded-[0.5rem] hover:bg-blue-50 transition-colors duration-500 ease-in-out dark:bg-[#ddd] dark:hover:bg-[#dde] inline-block">
+                    <div class="text-blue-400">
+                        <div class="flex gap-2 items-center"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-[1em] shrink-0">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                            </svg>
+
+                            <span>Replying to <span
+                                    class="font-semibold">{{ $chirp->parentUser->user->name }}</span></span>
+                        </div>
+                        <div class="ml-6 text-gray-500 text-sm italic">
+                            {{ Str::limit(strip_tags($chirp->parent->message), 60) }}
+                        </div>
+                    </div>
+                </a>
+            @else
+                <a href="/">
+                    <div class="flex gap-2 items-center mb-4 text-blue-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-[1em] shrink-0">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                        </svg>
+
+                        <span>Return to <span class="font-semibold">Home Page</span></span>
+                    </div>
+                </a>
+            @endif
             <div class="flex space-x-3">
 
                 @php $profileUrl = $chirp->user ? "/profile/{$chirp->user->id}" : "#"; @endphp
@@ -13,14 +44,6 @@
                             </div>
                         </a>
                     </div>
-                    {{-- @else
-                <div class="avatar placeholder">
-                    <div class="size-10 rounded-full">
-                        <img src="https://avatars.laravel.cloud/f61123d5-0b27-434c-a4ae-c653c7fc9ed6?vibe=stealth"
-                            alt="Anonymous User" class="rounded-full" />
-                    </div>
-                </div>
-            @endif --}}
 
                     <div class="min-w-0 flex-1">
                         <div class="flex justify-between w-full">
@@ -134,11 +157,11 @@
                 </div>
             </div>
         </form>
-        <div class="-ml-6">
+        <div class="-ml-6" :class>
             @forelse ($chirp->replies as $reply)
                 @include('chirps._reply', ['reply' => $reply])
             @empty
-                <p class="text-gray-500 text-lg">No replies have been created for this chirp yet.</p>
+                <p class="text-gray-500 text-lg ml-6">No replies have been created for this chirp yet.</p>
             @endforelse
         </div>
     </div>

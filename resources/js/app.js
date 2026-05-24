@@ -13,6 +13,11 @@ document.addEventListener('alpine:init', () => {
             document.documentElement.classList.toggle('dark-mode-filter', this.current === 'dark');
         }
     });
+
+    document.addEventListener('livewire:navigated', () => {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            document.documentElement.classList.toggle('dark-mode-filter', isDark);
+        });
 });
 
 document.addEventListener("trix-file-accept", function(event) {

@@ -13,6 +13,10 @@ state([
 ]);
 
 $toggle = function () {
+    if (auth()->guest()) {
+        return $this->redirect('/login');
+    }
+
     $userId = auth()->id();
 
     $deleted = $this->chirp->likes()->where('user_id', $userId)->delete();

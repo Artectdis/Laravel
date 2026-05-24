@@ -6,7 +6,7 @@
                     <img loading="lazy" src="{{ $user->avatar_url }}"
                         class="size-30 rounded-full justify-self-end self-top outline-white outline-3">
                     @if ($editPermission)
-                        <button class="btn btn-ghost py-2 px-4"><a href="/profile">Edit Profile</a></button>
+                        <button class="btn btn-ghost py-2 px-4"><a href="/settings">Edit Profile</a></button>
                     @endif
                 </div>
                 <div>
@@ -79,13 +79,44 @@
                 </div>
                 <div class="mt-4 flex items-center justify-end"></div>
             </div>
-            <h2 id="chirps" class="text-2xl font-bold my-2">Chirps</h2>
-            <hr class="border-gray-300 mb-4" />
-            <div class="flex flex-col gap-y-2">
-                @foreach ($chirps as $chirp)
-                    <x-chirp :chirp="$chirp" />
-                @endforeach
+            <div x-data="{ tab: new URLSearchParams(window.location.search).get('tab') || 'chirps' }">
+                <!-- Navigation Buttons -->
+                <div class="flex flex-row my-4 border-b border-gray-300">
+                    <a href="?tab=chirps"
+                        @click.prevent="tab = 'chirps'; window.history.pushState({}, '', '?tab=chirps')"
+                        :class="tab === 'chirps' ? '!border-[#5580d2] text-[#5580d2]' : 'border-transparent'"
+                        class="btn btn-ghost !px-8 !py-4 !rounded-none !border-0 !border-b-2 !text-lg">
+                        Chirps
+                    </a>
+                    <a href="?tab=replies"
+                        @click.prevent="tab = 'replies'; window.history.pushState({}, '', '?tab=replies')"
+                        :class="tab === 'replies' ? '!border-[#5580d2] text-[#5580d2]' : 'border-transparent'"
+                        class="btn btn-ghost !px-8 !py-4 !rounded-none !border-0 !border-b-2 !text-lg">
+                        Replies
+                    </a>
+                </div>
+
+                <div class="flex flex-col gap-y-2">
+                    <div class="flex flex-col gap-2" x-show="tab === 'chirps'" x-cloak>
+                        @forelse ($chirps as $chirp)
+                            <x-chirp :chirp="$chirp" />
+                        @empty
+                            <p class="text-gray-500 text-lg">{{ $user->name }} has not created any chirps yet.</p>
+                        @endforelse
+                        {{ $chirps->onEachSide(1)->links() }}
+                    </div>
+
+                    <div class="flex flex-col gap-2" x-show="tab === 'replies'" x-cloak>
+                        @forelse ($replies as $reply)
+                            <x-chirp :chirp="$reply" />
+                        @empty
+                            <p class="text-gray-500 text-lg">{{ $user->name }} has not created any replies yet.</p>
+                        @endforelse
+                        {{ $replies->onEachSide(1)->links() }}
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 </x-layout>

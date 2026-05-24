@@ -14,7 +14,7 @@ $chirps = computed(function () {
 });
 ?>
 
-<main class="px-8">
+<div class="px-8">
     <div class="max-w-4xl mx-auto">
         <div class="flex flex-row mb-4 border-b border-gray-300">
             <a href="/search/users/?query={{ $query }}"
@@ -34,4 +34,4 @@ $chirps = computed(function () {
         </div>
         {{ $this->chirps->withQueryString()->onEachSide(1)->links() }}
     </div>
-</main>
+</div>

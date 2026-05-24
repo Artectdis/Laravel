@@ -354,11 +354,94 @@ body {
     filter: invert(1) hue-rotate(180deg) !important;
 }
 
+.dark-mode-filter [data-tsui-dropdown-size] {
+    background-color: #ccc !important; 
+    border-color: #bbb !important;   
+    transition: all;
+    
+    backdrop-filter: saturate(0) !important;
+    filter: saturate(0.5);
+}
+
+.dark-mode-filter [data-tsui-dropdown-size] button {
+    color: #000 !important;
+    filter: saturate(0) !important;
+}
+
+.dark-mode-filter [data-tsui-dropdown-size] button:hover {
+    color: #fff !important; 
+    filter: saturate(0) !important;
+}
+
+/* Targets the teleported TallStackUI dropdown container */
+.dark-mode-filter [data-teleport-target="true"] a {
+    color: #000 !important;
+}
+
+/* If you want the specific black/grayscale look from your first message: */
+.dark-mode-filter [data-teleport-target="true"] svg {
+    fill: #000 !important;
+    filter: saturate(0) !important;
+}
+
+
+
+
+.dark-mode-filter [data-tsui-dropdown-size] a[href*="/edit"] button:hover,
+.dark-mode-filter [data-tsui-dropdown-size] a[href*="/edit"] button:focus {
+    background-color: #bbb !important; 
+    color: #000 !important;
+    filter: saturate(0) !important;
+}
+
+.dark-mode-filter [data-tsui-dropdown-size] div[role="menuitem"]:hover {
+    background-color: #f00 !important; 
+}
+
+.dark-mode-filter [data-tsui-dropdown-size] a[href*="/edit"] button:hover,
+.dark-mode-filter [data-tsui-dropdown-size] a[href*="/edit"] button:focus {
+    background-color: #bbb !important;
+}
+
+.dark-mode-filter [data-tsui-dropdown-size] div[role="menuitem"]:hover {
+    background-color: #ffb4b4 !important; 
+}
+
+.dark-mode-filter [data-tsui-dropdown-size] div[role="menuitem"]: span.text-red-400 {
+    color: rgb(255, 139, 139) !important;
+}
+.dark-mode-filter [data-tsui-dropdown-size] div[role="menuitem"]:hover span.text-red-400 {
+    color: #000 !important;
+}
+
+.dark-mode-filter [data-tsui-dropdown-size] .border-t {
+    border-top-color: #bbb !important;
+}
+
+.dark-mode-filter [data-tsui-dropdown-size] div[role="menuitem"] {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+
+[data-tsui-dropdown-size] div[role="menuitem"]:hover {
+    background-color: #ff4e4e !important; 
+}
+
+[data-tsui-dropdown-size] div[role="menuitem"]: span.text-red-400 {
+    color: rgb(255, 139, 139) !important;
+}
+[data-tsui-dropdown-size] div[role="menuitem"]:hover span.text-red-400 {
+    color: #fff !important;
+}
+
+
+
 .dark-mode-filter .light-toggle:hover {
     fill: #ff0 !important;
 }
 
-body > main.dark-mode-filter-main{
+.dark-mode-filter main{
     filter: saturate(0.2);
 }
 
@@ -370,9 +453,11 @@ body > main.dark-mode-filter-main{
     filter: invert(1) hue-rotate(180deg) saturate(0.2);
 }
 
-/* Re-invert images and videos so they appear normal */
-.dark-mode-filter img, .dark-mode-filter video, .dark-mode-filter iframe, .dark-mode-filter picture{
-    filter: invert(100%) hue-rotate(180deg);
+.dark-mode-filter img,
+.dark-mode-filter video,
+.dark-mode-filter iframe,
+.dark-mode-filter picture {
+    filter: invert(100%) hue-rotate(180deg) saturate(1.15);
 }
 
 html {

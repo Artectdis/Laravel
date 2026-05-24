@@ -3,13 +3,9 @@
 
 <head>
     <script>
-        document.documentElement.classList.toggle('dark-mode-filter', localStorage.getItem('theme') === 'dark');
-    </script>
-    <script data-navigate-once>
-        document.addEventListener('livewire:navigated', () => {
-            const isDark = localStorage.getItem('theme') === 'dark';
-            document.documentElement.classList.toggle('dark-mode-filter', isDark);
-        });
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-mode-filter');
+        }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,16 +56,17 @@
         <livewire:search />
 
         <div class="navbar-end gap-2">
-            <button @click="$store.theme.toggle()"
-            class="bg-transparent border-none p-0 cursor-pointer">
-                <svg x-cloak x-show="$store.theme.current === 'light'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            <button @click="$store.theme.toggle()" class="bg-transparent border-none p-0 cursor-pointer">
+                <svg x-cloak x-show="$store.theme.current === 'light'" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
                     class="dark-toggle size-6 fill-[#808080] hover:fill-[#4697E7] transition-colors duration-500 ease-in-out mx-2"
                     alt="Dark Logo">
                     <path fill-rule="evenodd"
                         d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z"
                         clip-rule="evenodd" />
                 </svg>
-                <svg x-cloak x-show="$store.theme.current === 'dark'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                <svg x-cloak x-show="$store.theme.current === 'dark'" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24" fill="currentColor"
                     class="light-toggle size-6 fill-[#fff] hover:fill-[#ff0] transition-colors duration-500 ease-in-out mx-2"
                     alt="Light Logo">
                     <path
@@ -78,17 +75,33 @@
 
             </button>
             @auth
-                <a href="/profile/{{ auth()->user()->id }}">
-                    <div
-                        class="topbar-profile flex flex-row bg-white hover:bg-gray-100 ring-[#E4E4E5] hover:ring-2 rounded-full transition-all duration-500 ease-in-out py-1 px-2 gap-2 items-center text-sm text-black">
-                        <strong>{{ auth()->user()->name }} </strong> <img src="{{ auth()->user()->avatar_url }}"
-                            class="nav-avatar size-7 rounded-full">
-                    </div>
-                </a>
-                <form method="POST" action="/logout" class="inline">
-                    @csrf
-                    <button type="submit" class="btn btn-ghost btn-sm">Logout</button>
-                </form>
+                <x-ts-dropdown position="bottom-end" class="nav-dropdown">
+                    <x-slot:action>
+                        {{-- Fused: Your custom pill styling used as the dropdown trigger --}}
+                        <button
+                            class="topbar-profile flex flex-row bg-white hover:bg-gray-100 ring-[#E4E4E5] hover:ring-2 rounded-full transition-all duration-500 ease-in-out py-1 px-2 gap-2 items-center text-sm text-black focus:outline-none"
+                            x-on:click="show = !show">
+
+                            <strong>{{ auth()->user()->name }}</strong>
+
+                            <img src="{{ auth()->user()->avatar_url }}" class="nav-avatar size-7 rounded-full">
+                        </button>
+                    </x-slot:action>
+
+                    {{-- Dropdown Menu Items --}}
+                    <x-ts-dropdown.items icon="user" text="My Profile" href="/profile/{{ auth()->user()->id }}" />
+
+                    <x-ts-dropdown.items icon="cog" text="Settings" href="/settings" />
+
+                    {{-- The Logout Item --}}
+                    <x-slot:footer>
+                        <form method="POST" action="/logout" x-ref="logoutForm">
+                            @csrf
+                            <x-ts-dropdown.items icon="arrow-left-on-rectangle" text="Logout"
+                                x-on:click="$refs.logoutForm.submit()" />
+                        </form>
+                    </x-slot:footer>
+                </x-ts-dropdown>
             @else
                 <a href="/login" class="btn btn-ghost btn-sm">Sign In</a>
                 <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Sign Up</a>
