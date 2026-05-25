@@ -1,12 +1,27 @@
-@props(['chirp'])
+@props(['chirp', 'replying' => null])
 
-<div class="card bg-base-100 group cursor-pointer relative hover:!bg-gray-200 !transition-colors !duration-500 !ease-in-out"
+<div class="card bg-base-100 group cursor-pointer relative hover:!bg-gray-200 !transition-colors !duration-500 !ease-in-out z-2"
     onclick="if(!window.getSelection().toString()) { Livewire.navigate('/chirps/{{ $chirp->id }}') }">
     <div class="card-body">
+        @if ($replying)
+            <div class="flex gap-2"><a href="/chirps/{{ $replying->id }}" onclick="event.stopPropagation()"
+                    class="!-mt-1 !mb-0.2 text-xs text-blue-400 font-medium bg-white dark:bg-gray-200 dark:hover:!text-black rounded-full py-1 px-2 w-fit hover:bg-blue-500 hover:!text-white transition-colors ease-in-out">
+                    <span>Replying to <span class="font-semibold">{{ $replying->user->name }}</span></span>
+                </a>
+                <a href="/chirps/{{ $replying->id }}" onclick="event.stopPropagation()"
+                    class="!-mt-1 !mb-0.2 text-xs text-blue-400 font-medium bg-white dark:bg-gray-200 dark:hover:!text-black rounded-full py-1 px-2 w-fit hover:bg-blue-500 hover:!text-white transition-colors ease-in-out">
+                    <span>Replying to <span class="font-semibold">{{ $replying->user->name }}</span></span>
+                </a>
+            </div>
+            <a href="/chirps/{{ $replying->id }}" onclick="event.stopPropagation()"
+                class="!-mt-1 !mb-0.2 text-xs text-blue-400 font-medium bg-white dark:bg-gray-200 dark:hover:!text-black rounded-full py-1 px-2 w-fit hover:bg-blue-500 hover:!text-white transition-colors ease-in-out">
+                <span>Replying to <span class="font-semibold">{{ $replying->user->name }}</span></span>
+            </a>
+        @endif
         <div class="flex space-x-3">
             @php $profileUrl = $chirp->user ? "/profile/{$chirp->user->id}" : "#"; @endphp
 
-            <div class="avatar relative z-20">
+            <div class="avatar relative z-20 h-fit">
                 <a href="{{ $profileUrl }}" onclick="event.stopPropagation()">
                     <div class="size-10 rounded-full">
                         <img loading="lazy" src="{{ $chirp->user->avatar_url }}" alt="{{ $chirp->user->name }}'s avatar"
@@ -46,10 +61,10 @@
                         @endif
                     </div>
                     <!-- Only show edit/delete if user owns the chirp -->
-                    <div class="relative z-20" onclick="event.stopPropagation()">
+                    <div class="relative z-20 {{ $replying ? '-mt-8' : '' }}" onclick="event.stopPropagation()">
                         <x-ts-dropdown icon="ellipsis-horizontal" static>
                             @if (auth()->check() && auth()->id() === $chirp->user_id)
-                                <a href="/chirps/{{ $chirp->id }}/edit" target="_blank">
+                                <a href="/chirps/{{ $chirp->id }}/edit">
                                     <x-ts-dropdown.items text="Edit" />
                                 </a>
                                 <x-ts-dropdown.items separator
@@ -82,7 +97,7 @@
                             </form>
                         </div> --}}
                 </div>
-                <div class="w-full trix-content -mt-1 flex">
+                <div class="w-full trix-content {{ $replying ? 'mt-0.5' : '-mt-1' }} flex">
                     <div class="flex-1">
                         @safeHtml($chirp->message)
                     </div>

@@ -20,15 +20,15 @@
                     </div>
                 </a>
             @else
-                <a href="/">
-                    <div class="flex gap-2 items-center mb-4 text-blue-400">
+                <a href="/" class="inline-block size-fit mb-4">
+                    <div
+                        class="flex gap-2 items-center text-blue-400 hover:text-blue-600 transition-colors duration-200 ease-in-out h-fit">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-[1em] shrink-0">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
                         </svg>
-
-                        <span>Return to <span class="font-semibold">Home Page</span></span>
+                        Return
                     </div>
                 </a>
             @endif
@@ -77,7 +77,7 @@
                             <div class="relative z-20 !ml-auto" onclick="event.stopPropagation()">
                                 <x-ts-dropdown icon="ellipsis-horizontal" static>
                                     @if (auth()->check() && auth()->id() === $chirp->user_id)
-                                        <a href="/chirps/{{ $chirp->id }}/edit" target="_blank">
+                                        <a href="/chirps/{{ $chirp->id }}/edit">
                                             <x-ts-dropdown.items text="Edit" />
                                         </a>
                                         <x-ts-dropdown.items separator
@@ -104,10 +104,9 @@
                 <livewire:like :chirp="$chirp" />
             </div>
         </div>
-        <hr class="my-4 border-0 border-t-2 border-gray-300 opacity-100" />
         <form method="POST" action="/chirps" novalidate>
             @csrf
-            <div class="form-control w-full mb-4">
+            <div class="form-control w-full mt-4">
                 <input id="message_hidden" type="hidden" name="message" value="{{ old('message') }}">
                 <input type="hidden" name="parent_id" value="{{ $chirp->id }}">
 
@@ -117,8 +116,8 @@
                     focused: {{ old('message') ? 'true' : 'false' }}
                 }" @focusin="focused = true" @focusout="focused = false" x-cloak>
 
-                    <div x-show="focused || count > 0" x-transition x-cloak class="mb-2">
-                        <trix-toolbar id="chirp_toolbar"></trix-toolbar>
+                    <div x-show="focused || count > 0" x-transition x-cloak>
+                        <trix-toolbar id="chirp_toolbar" class="mt-4"></trix-toolbar>
                     </div>
 
                     <div class="transition-all duration-200 ease-in-out">
@@ -148,7 +147,7 @@
                             <span x-text="count"></span><span>/255</span>
                         </div>
 
-                        <div x-show="focused || count > 0" class="flex items-center justify-end ml-auto">
+                        <div x-show="focused || count > 0" class="flex items-center justify-end ml-auto mb-2">
                             <button type="submit" class="btn btn-primary btn-sm duration-0">
                                 Chirp
                             </button>
@@ -157,11 +156,23 @@
                 </div>
             </div>
         </form>
-        <div class="-ml-6" :class>
+        <div class="-mt-2" :class>
             @forelse ($chirp->replies as $reply)
-                @include('chirps._reply', ['reply' => $reply])
+                @include('chirps._reply', ['reply' => $reply, 'depth' => 1])
             @empty
-                <p class="text-gray-500 text-lg ml-6">No replies have been created for this chirp yet.</p>
+                <div class="hero py-12">
+                    <div class="hero-content text-center">
+                        <div>
+                            <svg class="mx-auto h-12 w-12 opacity-30" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                                </path>
+                            </svg>
+                            <p class="mt-4 text-base-content/60">No replies yet. Be the first to reply!</p>
+                        </div>
+                    </div>
+                </div>
             @endforelse
         </div>
     </div>

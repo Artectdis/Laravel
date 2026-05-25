@@ -79,7 +79,7 @@
                     <x-slot:action>
                         {{-- Fused: Your custom pill styling used as the dropdown trigger --}}
                         <button
-                            class="topbar-profile flex flex-row bg-white hover:bg-gray-100 ring-[#E4E4E5] hover:ring-2 rounded-full transition-all duration-500 ease-in-out py-1 px-2 gap-2 items-center text-sm text-black focus:outline-none"
+                            class="cursor-pointer topbar-profile flex flex-row bg-white hover:bg-gray-100 ring-[#E4E4E5] hover:ring-2 rounded-full transition-all duration-500 ease-in-out py-1 px-2 gap-2 items-center text-sm text-black focus:outline-none"
                             x-on:click="show = !show">
 
                             <strong>{{ auth()->user()->name }}</strong>
@@ -88,11 +88,13 @@
                         </button>
                     </x-slot:action>
 
-                    {{-- Dropdown Menu Items --}}
-                    <x-ts-dropdown.items icon="user" text="My Profile" href="/profile/{{ auth()->user()->id }}" />
+                    <x-ts-dropdown.items icon="user" text="My Profile" href="/profile"
+                        class="!text-blue-500 [&_svg]:!text-blue-500 dark:!text-black" />
 
-                    <x-ts-dropdown.items icon="cog" text="Settings" href="/settings" />
 
+                    {{-- Settings Item --}}
+                    <x-ts-dropdown.items icon="cog-6-tooth" text="Settings" href="/settings"
+                        class="!text-blue-500  [&_svg]:!text-blue-500 dark:!text-black" />
                     {{-- The Logout Item --}}
                     <x-slot:footer>
                         <form method="POST" action="/logout" x-ref="logoutForm">

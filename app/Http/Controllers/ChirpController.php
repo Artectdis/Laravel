@@ -66,6 +66,9 @@ class ChirpController extends Controller
      */
     public function edit(Chirp $chirp)
     {
+        if (!str_contains(url()->previous(), '/edit')) {
+        session(['chirp_origin' => url()->previous()]);
+    }
         $this->authorize('update', $chirp);
         $oldMessageLength = mb_strlen(trim(strip_tags(str_replace('&nbsp;', ' ', $chirp->message))));
 
@@ -79,17 +82,22 @@ class ChirpController extends Controller
     {
         $this->authorize('update', $chirp);
 
+        $plainText = trim(strip_tags(str_replace('&nbsp;', ' ', $request->message)));
+        $request->merge(['message_count' => mb_strlen($plainText)]);
         $validated = $request->validate([
-            'message' => 'required|string|max:255|min:5',
+            'message' => 'required|string',
+            'message_count' => 'numeric|min:5|max:255',
+            'parent_id' => 'nullable|exists:chirps,id'
         ], [
             'message.required' => 'Please write something to chirp! 🐤',
-            'message.max' => 'Your chirp is too long! Keep it under 255 characters. 🐤',
-            'message.min' => 'Your chirp is too short! Make it at least 5 characters. 🐤'
+            'message_count.min' => 'Your chirp is too short! Make it at least 5 characters. 🐤',
+            'message_count.max' => 'Your chirp is too long! Keep it under 255 characters. 🐤',
         ]);
- 
+        
         $chirp->update($validated);
+        $url = session()->pull('chirp_origin', '/');
 
-        return redirect('/')->with('success', 'Chirp updated successfully!');
+        return redirect($url)->with('success', 'Chirp updated successfully!');
     }
 
     /**
