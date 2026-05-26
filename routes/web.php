@@ -24,6 +24,13 @@ Route::middleware('auth')->group(function() {
     Route::patch('/settings/avatar', [ProfileController::class, 'updateAvatar']);
     Route::delete('/settings/delete/{id}', [ProfileController::class, 'destroy']);
     Route::get('/settings', [ProfileController::class, 'show']);
+
+    Route::post('/email/verification-notification', [ProfileController::class, 'sendVerification'])
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+    Route::get('/email/verify/{id}/{hash}', [ProfileController::class, 'verifyEmail'])
+        ->middleware('signed')
+        ->name('verification.verify');
 });
 
 // REGISTER ROUTES
@@ -46,15 +53,9 @@ Route::post('/logout', Logout::class)
 
 
 
-
-Route::get('/blog', function () {
-    return view('blog');
-});
-Route::get('/layouts/app', function () {
-    return view('layouts.app');
-});
-Route::get('/home', function () {
-    return view('home');
-});
-
-Route::get('/posts', [PostController::class, 'index']);
+// Route::get('/blog', function () {
+//     return view('blog');
+// });
+// Route::get('/layouts/app', function () {
+//     return view('layouts.app');
+// });

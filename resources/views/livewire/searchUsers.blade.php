@@ -25,7 +25,7 @@ $users = computed(function () {
         </div>
         <h2 class="text-xl">Results for: <strong>{{ $query }}</strong></h2>
         <p class="text-gray-500 mb-6">{{ $this->users->total() }} Users Found.</p>
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 mb-2">
             @forelse ($this->users as $user)
                 <div class="card bg-base-100 cursor-pointer relative hover:!bg-gray-200 !transition-colors !duration-500 !ease-in-out"
                     onclick="if(!window.getSelection().toString()) { Livewire.navigate('/profile/{{ $user->id }}') }">

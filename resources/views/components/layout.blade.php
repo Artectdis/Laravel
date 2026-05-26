@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="laravelChirper">
+<html lang="en" data-theme="laravelChirper" class="scroll-smooth">
 
 <head>
     <script>
@@ -88,21 +88,25 @@
                         </button>
                     </x-slot:action>
 
-                    <x-ts-dropdown.items icon="user" text="My Profile" href="/profile"
+                    <x-ts-dropdown.items icon="user" text="My Profile" href="/profile/{{ auth()->user()->id }}"
                         class="!text-blue-500 [&_svg]:!text-blue-500 dark:!text-black" />
 
 
                     {{-- Settings Item --}}
                     <x-ts-dropdown.items icon="cog-6-tooth" text="Settings" href="/settings"
                         class="!text-blue-500  [&_svg]:!text-blue-500 dark:!text-black" />
+
                     {{-- The Logout Item --}}
-                    <x-slot:footer>
-                        <form method="POST" action="/logout" x-ref="logoutForm">
-                            @csrf
-                            <x-ts-dropdown.items icon="arrow-left-on-rectangle" text="Logout"
-                                x-on:click="$refs.logoutForm.submit()" />
-                        </form>
-                    </x-slot:footer>
+                    <x-ts-dropdown.items icon="arrow-left-on-rectangle" text="Log Out" href="/logout"
+                        x-on:click.prevent="$refs.logoutForm.submit()"
+                        class="!text-blue-500 [&_svg]:!text-blue-500 dark:!text-black">
+
+                    </x-ts-dropdown.items>
+                    <form method="POST" action="/logout" x-ref="logoutForm" class="hidden">
+                        @csrf
+                    </form>
+
+
                 </x-ts-dropdown>
             @else
                 <a href="/login" class="btn btn-ghost btn-sm">Sign In</a>
@@ -113,6 +117,18 @@
 
     <!-- Success Toast -->
     @if (session('success'))
+        <div class="toast toast-top toast-center animate-fade-out">
+            <div class="alert alert-success">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
+    @if (session('status') == 'verification-link-sent')
         <div class="toast toast-top toast-center animate-fade-out">
             <div class="alert alert-success">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"

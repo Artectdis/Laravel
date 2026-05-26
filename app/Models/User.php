@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany; 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'phone_number', 'birthday', 'avatar'])]
+#[Fillable(['name', 'email', 'password', 'bio', 'phone_number', 'birthday', 'avatar'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -41,13 +43,25 @@ class User extends Authenticatable
     {
        return $this->hasMany(Like::class); 
     }
+    
+    public function blocks(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'blocks', 'user_id', 'blocked_user_id')
+                    ->withTimestamps();
+    }
 
-    public function following()
+    public function blockedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'blocks', 'blocked_user_id', 'user_id')
+                    ->withTimestamps();
+    }
+
+    public function following(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'follower_user', 'follower_id', 'following_id');
     }
 
-    public function followers()
+    public function followers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'follower_user', 'following_id', 'follower_id');
     }
@@ -57,6 +71,8 @@ class User extends Authenticatable
     if (!$this->avatar) {
         return 'https://avatars.laravel.cloud/' . urlencode($this->email);
     }
+
+    
 
     return env('SUPABASE_PUBLIC_URL') . $this->avatar;
     }

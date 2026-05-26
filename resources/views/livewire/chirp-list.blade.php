@@ -18,12 +18,15 @@ $loadMore = function () {
 
     $perPage = 20; // Load 20 at a time — fewer round trips for 100 chirps
 
-    $query = Chirp::whereNull('parent_id') // <--- ADD THIS LINE
-        ->with('user:id,name,email,avatar,email_verified_at')
+    $blockedIds = auth()->check() ? auth()->user()->blocks()->pluck('blocked_user_id') : collect();
+
+    $query = Chirp::whereNull('parent_id')
+        ->whereNotIn('user_id', $blockedIds)
+        ->with('user:id,name,email,avatar,email_verified_at', 'tags')
         ->withCount(['likes', 'replies']) // Eager load reply count too!
         ->with(['userLike' => fn($q) => $q->where('user_id', auth()->id())])
         ->select('id', 'user_id', 'message', 'created_at', 'updated_at', 'parent_id')
-        ->latest('id');
+        ->latest();
 
     // Keyset: no OFFSET, no cursor encoding overhead, just a WHERE on an indexed column
     if ($this->lastId !== null) {

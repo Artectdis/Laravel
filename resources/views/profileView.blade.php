@@ -6,7 +6,14 @@
                     <img loading="lazy" src="{{ $user->avatar_url }}"
                         class="size-30 rounded-full justify-self-end self-top outline-white outline-3">
                     @if ($editPermission)
-                        <button class="btn btn-ghost py-2 px-4"><a href="/settings">Edit Profile</a></button>
+                        <a href="/settings"><button class="btn btn-ghost py-2 px-4">Edit Profile</button></a>
+                    @else
+                        <div onclick="event.stopPropagation()">
+                            <x-ts-dropdown icon="ellipsis-horizontal" class="z-20" static>
+                                <livewire:follow :user="$user" />
+                                <livewire:block :user="$user" />
+                            </x-ts-dropdown>
+                        </div>
                     @endif
                 </div>
                 <div>
@@ -30,6 +37,11 @@
                             class="ml-0.5 -mt-1 text-sm text-gray-500 font-bold break-words self-center text-wrap w-full">
                             {{ $user->email }}
                         </h1>
+                        @if ($user->bio)
+                            <div class="mt-2">
+                                @safeHtml($user->bio)
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

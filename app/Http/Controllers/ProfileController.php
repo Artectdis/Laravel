@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Format;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 class ProfileController extends Controller
 {
@@ -42,13 +44,45 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Chirp $chirps)
-    {
-        $chirps = Auth::user()->chirps()->get();
-        $user = Auth::user();
-        $follows = $user->following()->get(); 
-        return view('profile', compact('chirps', 'user', 'follows'));
-    }
+    public function show()
+{
+    $user = Auth::user();
+
+    // 1. Paginate Follows
+    $follows = $user->following()
+        ->paginate(5, ['*'], 'follows_page')
+        ->appends(request()->except('follows_page'));
+
+    // 2. Paginate Followers
+    $followers = $user->followers()
+        ->paginate(5, ['*'], 'followers_page')
+        ->appends(request()->except('followers_page'));
+        
+    // 3. Paginate Blocks
+    $blocks = $user->blocks()
+        ->latest()
+        ->paginate(5, ['*'], 'blocks_page')
+        ->appends(request()->except('blocks_page'));
+
+    // 4. Paginate Chirps
+    $chirps = $user->chirps()
+        ->whereNull('parent_id')
+        ->latest()
+        ->paginate(5, ['*'], 'chirps_page')
+        ->appends(request()->except('chirps_page'));
+
+    // 5. Paginate Replies
+    $replies = $user->chirps()
+        ->whereNotNull('parent_id')
+        ->latest()
+        ->paginate(5, ['*'], 'replies_page')
+        ->appends(request()->except('replies_page'));
+
+
+
+        return view('profile', compact('chirps', 'replies', 'blocks', 'user', 'follows', 'followers'));
+}
+
         
     public function showProfile(string $id)
 {
@@ -91,11 +125,16 @@ class ProfileController extends Controller
             abort(403, "You cannot edit someone else's profile.");
         }
 
-        $data = $request->only(['name', 'email', 'phone_number', 'birthday']);
-        
-        // grab user and update
+        $validated = $request->validate([
+            'name'          => 'required|string|max:255',
+            'email'         => 'required','email', Rule::unique('users')->ignore($id),
+            'phone_number'  => 'nullable|string',
+            'birthday'      => 'required|date',
+            'bio'           => 'nullable|string|min:5|max:500',
+        ]);
+                
         $user = User::findOrFail($id);
-        $user->update($data);
+        $user->update($validated);
         return redirect('/settings?saved=true')->with('success', 'Profile updated successfully!');
     }
 
@@ -144,5 +183,17 @@ class ProfileController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
         return redirect('/')->with('success', 'Account successfully deleted.');
+    }
+
+    public function sendVerification(Request $request)
+    {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('status', 'verification-link-sent');
+    }
+
+    public function verifyEmail(EmailVerificationRequest $request)
+    {
+        $request->fulfill();
+        return redirect('/settings')->with('status', 'profile-verified');
     }
 }

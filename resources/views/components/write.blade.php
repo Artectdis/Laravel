@@ -4,6 +4,15 @@
     onclick="if(!window.getSelection().toString()) { Livewire.navigate('/chirps/{{ $chirp->id }}') }">
     <div class="card-body">
         @if ($replying)
+            <div class="flex gap-2"><a href="/chirps/{{ $replying->id }}" onclick="event.stopPropagation()"
+                    class="!-mt-1 !mb-0.2 text-xs text-blue-400 font-medium bg-white dark:bg-gray-200 dark:hover:!text-black rounded-full py-1 px-2 w-fit hover:bg-blue-500 hover:!text-white transition-colors ease-in-out">
+                    <span>Replying to <span class="font-semibold">{{ $replying->user->name }}</span></span>
+                </a>
+                <a href="/chirps/{{ $replying->id }}" onclick="event.stopPropagation()"
+                    class="!-mt-1 !mb-0.2 text-xs text-blue-400 font-medium bg-white dark:bg-gray-200 dark:hover:!text-black rounded-full py-1 px-2 w-fit hover:bg-blue-500 hover:!text-white transition-colors ease-in-out">
+                    <span>Replying to <span class="font-semibold">{{ $replying->user->name }}</span></span>
+                </a>
+            </div>
             <a href="/chirps/{{ $replying->id }}" onclick="event.stopPropagation()"
                 class="!-mt-1 !mb-0.2 text-xs text-blue-400 font-medium bg-white dark:bg-gray-200 dark:hover:!text-black rounded-full py-1 px-2 w-fit hover:bg-blue-500 hover:!text-white transition-colors ease-in-out">
                 <span>Replying to <span class="font-semibold">{{ $replying->user->name }}</span></span>
@@ -56,7 +65,7 @@
                             <div class="flex flex-wrap gap-1 ml-auto items-center">
                                 @foreach ($chirp->tags as $tag)
                                     <a href="/?tag={{ $tag->name }}" onclick="event.stopPropagation()"
-                                        class="opacity-100 badge badge-sm !text-white dark:!text-black hover:ring-2 hover:brightness-110 dark:hover:brightness-80 dark:hover:ring-black hover:ring-white border-none !text-xs !px-2 !py-1 rounded-full transition-all cursor-pointer"
+                                        class="opacity-100 badge badge-sm !text-white dark:!text-black hover:ring-2 dark:hover:ring-black hover:ring-white border-none !text-xs !px-2 !py-1 rounded-full transition-all cursor-pointer"
                                         style="background-color: {{ $tag->color }}">
                                         #{{ $tag->name }}
                                     </a>
