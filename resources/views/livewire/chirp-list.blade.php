@@ -1,16 +1,13 @@
 <?php
-use function Livewire\Volt\{state, mount, url, on}; // Added 'on'
+use function Livewire\Volt\{state, mount};
 use App\Models\Chirp;
 
-state(['chirps' => collect(), 'lastCreatedAt' => null, 'hasMore' => true]);
-state(['tag' => ''])->url();
-state(['feed' => 'global'])->url();
+state(['feed', 'tag'])->reactive();
 
-on([
-    'filter-feed' => function ($type) {
-        $this->feed = $type;
-        $this->resetList();
-    },
+state([
+    'chirps' => collect(),
+    'lastCreatedAt' => null,
+    'hasMore' => true,
 ]);
 
 $updatedTag = fn() => $this->resetList();
