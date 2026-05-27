@@ -55,7 +55,7 @@
                         @if ($chirp->tags->isNotEmpty())
                             <div class="flex flex-wrap gap-1 ml-auto items-center">
                                 @foreach ($chirp->tags as $tag)
-                                    <a href="/?tag={{ $tag->name }}" onclick="event.stopPropagation()"
+                                    <a href="/?tag={{ $tag->id }}" onclick="event.stopPropagation()"
                                         class="opacity-100 badge badge-sm !text-white dark:!text-black hover:ring-2 hover:brightness-110 dark:hover:brightness-80 dark:hover:ring-black hover:ring-white border-none !text-xs !px-2 !py-1 rounded-full transition-all cursor-pointer"
                                         style="background-color: {{ $tag->color }}">
                                         #{{ $tag->name }}

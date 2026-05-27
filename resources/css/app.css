@@ -498,20 +498,36 @@ html {
     background: #ccc;
 }
 
+.dark-mode-filter textarea {
+    background: #ccc;
+}
+
 .dark-mode-filter .shadow-sm {
-    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0px 0px rgba(255, 255, 255, 0.5);
 }
 
 .dark-mode-filter a[aria-label] {
-    background: #eee !important;
+    background: #e0e0e0 !important;
 }
 
 .dark-mode-filter span[aria-disabled] > span {
-    background: #eee !important;
+    background: #e0e0e0 !important;
 }
 
 .dark-mode-filter .searchBackground {
-    background: #eee !important;
+    background: #e0e0e0 !important;
+}
+
+.dark-mode-filter a[aria-label]:hover {
+    background: #ccc !important;
+}
+
+.dark-mode-filter span[aria-disabled]:hover > span {
+    background: #ccc !important;
+}
+
+.dark-mode-filter .searchBackground:hover {
+    background: #ccc !important;
 }
 
 .dark-mode-filter .btn-primary {

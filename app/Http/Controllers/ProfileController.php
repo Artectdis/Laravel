@@ -120,23 +120,30 @@ class ProfileController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {   
-        if (Auth::id() !== (int)$id) { // if not the same user
-            abort(403, "You cannot edit someone else's profile.");
-        }
-
-        $validated = $request->validate([
-            'name'          => 'required|string|max:255',
-            'email'         => 'required','email', Rule::unique('users')->ignore($id),
-            'phone_number'  => 'nullable|string',
-            'birthday'      => 'required|date',
-            'bio'           => 'nullable|string|min:5|max:500',
-        ]);
-                
-        $user = User::findOrFail($id);
-        $user->update($validated);
-        return redirect('/settings?saved=true')->with('success', 'Profile updated successfully!');
+{   
+    if (Auth::id() !== (int)$id) {
+        abort(403, "You cannot edit someone else's profile.");
     }
+
+    $validated = $request->validate([
+        'name'          => 'required|string|max:255',
+        'email'         => ['required', 'email', Rule::unique('users')->ignore($id)],
+        'phone_number'  => 'nullable|string',
+        'birthday'      => 'required|date',
+        'bio'           => 'nullable|string|min:5|max:500',
+    ]);
+            
+    $user = User::findOrFail($id);
+    
+    $user->fill($validated);
+
+    if ($user->isDirty('email')) {
+        $user->email_verified_at = null;
+    }
+    $user->save();
+
+    return redirect('/settings?saved=true')->with('success', 'Profile updated successfully!');
+}
 
      public function updateAvatar(Request $request)
     {

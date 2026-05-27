@@ -11,15 +11,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail; // This is the Interface
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait; // This is the Trait
 use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'password', 'bio', 'phone_number', 'birthday', 'avatar'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, MustVerifyEmailTrait; 
 
     /**
      * Get the attributes that should be cast.

@@ -1,36 +1,54 @@
 <?php
-use function Livewire\Volt\{state, mount};
+use function Livewire\Volt\{state, mount, url, on}; // Added 'on'
 use App\Models\Chirp;
 
-// Use a typed collect() so Livewire serializes it correctly across requests
-state(['chirps' => collect(), 'lastId' => null, 'hasMore' => true, 'loading' => false]);
+state(['chirps' => collect(), 'lastCreatedAt' => null, 'hasMore' => true]);
+state(['tag' => ''])->url();
+state(['feed' => 'global'])->url();
+
+on([
+    'filter-feed' => function ($type) {
+        $this->feed = $type;
+        $this->resetList();
+    },
+]);
+
+$updatedTag = fn() => $this->resetList();
+$updatedFeed = fn() => $this->resetList();
+
+$resetList = function () {
+    $this->reset(['chirps', 'lastCreatedAt', 'hasMore']);
+    $this->loadMore();
+};
 
 mount(function () {
     $this->loadMore();
 });
 
 $loadMore = function () {
-    if (!$this->hasMore || $this->loading) {
+    if (!$this->hasMore) {
         return;
     }
 
-    $this->loading = true;
-
-    $perPage = 20; // Load 20 at a time — fewer round trips for 100 chirps
-
+    $perPage = 20;
     $blockedIds = auth()->check() ? auth()->user()->blocks()->pluck('blocked_user_id') : collect();
 
     $query = Chirp::whereNull('parent_id')
+        ->when($this->tag, fn($q) => $q->whereRelation('tags', 'tags.id', $this->tag))
         ->whereNotIn('user_id', $blockedIds)
         ->with('user:id,name,email,avatar,email_verified_at', 'tags')
-        ->withCount(['likes', 'replies']) // Eager load reply count too!
+        ->withCount(['likes', 'replies'])
         ->with(['userLike' => fn($q) => $q->where('user_id', auth()->id())])
         ->select('id', 'user_id', 'message', 'created_at', 'updated_at', 'parent_id')
         ->latest();
 
-    // Keyset: no OFFSET, no cursor encoding overhead, just a WHERE on an indexed column
-    if ($this->lastId !== null) {
-        $query->where('id', '<', $this->lastId);
+    if ($this->feed === 'following' && auth()->check()) {
+        $followingIds = auth()->user()->following()->pluck('following_user_id');
+        $query->whereIn('user_id', $followingIds->push(auth()->id()));
+    }
+
+    if ($this->lastCreatedAt !== null) {
+        $query->where('created_at', '<', $this->lastCreatedAt);
     }
 
     $newChirps = $query->limit($perPage + 1)->get();
@@ -42,19 +60,18 @@ $loadMore = function () {
         $this->hasMore = false;
     }
 
-    // Bug fix from V1: always update lastId, even on first page
     if ($newChirps->isNotEmpty()) {
-        $this->lastId = $newChirps->last()->id;
+        $this->lastCreatedAt = $newChirps->last()->created_at;
+        $this->chirps = $this->chirps->merge($newChirps)->unique('id')->values();
     }
-
-    $this->chirps = $this->chirps->merge($newChirps);
-    $this->loading = false;
 };
+
 ?>
 
 <div class="space-y-4">
+
     @forelse ($chirps as $chirp)
-        <div wire:key="chirp-{{ $chirp->id }}">
+        <div wire:key="chirp-{{ $chirp->id }}-{{ $feed }}">
             <x-chirp :chirp="$chirp" />
         </div>
     @empty
@@ -74,14 +91,15 @@ $loadMore = function () {
         @endif
     @endforelse
 
-    {{-- 
-        800px margin: triggers loadMore well before the spinner is visible.
-        wire:loading.remove hides the spinner once Livewire responds.
-        The `loading` guard on the PHP side prevents duplicate concurrent calls.
-    --}}
     @if ($hasMore)
         <div x-data x-intersect.margin.800px="$wire.loadMore()" class="flex justify-center py-8">
             <span class="loading loading-spinner loading-lg text-primary"></span>
         </div>
+    @else
+        @if ($chirps->isNotEmpty())
+            <div class="flex justify-center py-8 text-base-content/40 text-sm">
+                You've reached the end
+            </div>
+        @endif
     @endif
 </div>

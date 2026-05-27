@@ -4,8 +4,21 @@
     </x-slot:title>
 
     <div class="max-w-2xl mx-auto">
-        <h1 class="text-3xl font-bold">Latest Chirps</h1>
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-3xl font-bold">Latest Chirps</h1>
 
+            <div class="flex bg-gray-800 p-1 rounded-lg" x-data="{ active: '{{ $feed }}' }">
+                <div class="tabs">
+                    <button x-on:click="active = 'global'; $dispatch('filter-feed', { type: 'global' })"
+                        :class="active === 'global' ? 'bg-gray-700 text-white' : 'text-gray-400'"
+                        class="px-4 py-1 rounded-md transition">Global</button>
+
+                    <button x-on:click="active = 'following'; $dispatch('filter-feed', { type: 'following' })"
+                        :class="active === 'following' ? 'bg-gray-700 text-white' : 'text-gray-400'"
+                        class="px-4 py-1 rounded-md transition">Following</button>
+                </div>
+            </div>
+        </div>
         <!-- Write START -->
 
         <div class="card bg-base-100 shadow mt-8 min-h-[104px]">

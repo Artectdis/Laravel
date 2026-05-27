@@ -10,9 +10,7 @@ state(['query' => fn() => request('query')]);
 
 // 3. Perform the database search
 $chirps = computed(function () {
-    $blockedIds = = auth()->check() 
-    ? auth()->user()->blocks()->pluck('blocked_user_id') 
-    : collect();
+    $blockedIds = auth()->check() ? auth()->user()->blocks()->pluck('blocked_user_id') : collect();
     return Chirp::where('message', 'ilike', "%{$this->query}%")
         ->whereNotIn('user_id', $blockedIds)
         ->latest()
