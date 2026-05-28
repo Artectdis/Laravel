@@ -66,6 +66,12 @@ $users = computed(function () {
                                     </div>
                                 </div>
                             </div>
+                            <div onclick="event.stopPropagation()">
+                                <x-ts-dropdown icon="ellipsis-horizontal" class="z-20" static>
+                                    <livewire:follow :user="$user" />
+                                    <livewire:block :user="$user" />
+                                </x-ts-dropdown>
+                            </div>
                         </div>
                     </div>
                 </div>

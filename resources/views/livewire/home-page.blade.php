@@ -1,17 +1,20 @@
 <?php
 use function Livewire\Volt\{state, mount};
 
-// Define URL-tracked states first
-state(['feed' => 'global'])->url();
 state(['tag' => ''])->url();
-
-// Define internal states (passed from controller)
 state(['availableTags' => [], 'oldMessageLength' => 0]);
+state(['activeFeed' => 'global']);
 
 mount(function ($availableTags, $oldMessageLength) {
     $this->availableTags = $availableTags;
     $this->oldMessageLength = $oldMessageLength;
+    $this->activeFeed = request('feed', 'global');
 });
+
+$setFeed = function (string $feed) {
+    $this->activeFeed = $feed;
+    $this->dispatch('feed-changed', feed: $feed);
+};
 ?>
 
 <div>
@@ -19,15 +22,17 @@ mount(function ($availableTags, $oldMessageLength) {
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-3xl font-bold">Latest Chirps</h1>
 
-            <div class="flex bg-gray-800 p-1 rounded-lg">
-                <button wire:click="$set('feed', 'global')"
-                    :class="$wire.feed === 'global' ? 'bg-gray-700 text-white' : 'text-gray-400'"
-                    class="px-4 py-1 rounded-md transition-colors">
+            <div class="bg-[#f7f7f8] text-gray-400 flex border border-black/10 rounded-[10px] p-1 rounded-lg">
+                <button wire:click="setFeed('global')"
+                    :class="$wire.activeFeed === 'global' ? 'bg-[#ededee] text-primary font-semibold' :
+                        'text-gray-400'"
+                    class="px-4 py-1 rounded-md transition-colors cursor-pointer">
                     Global
                 </button>
-                <button wire:click="$set('feed', 'following')"
-                    :class="$wire.feed === 'following' ? 'bg-gray-700 text-white' : 'text-gray-400'"
-                    class="px-4 py-1 rounded-md transition-colors">
+                <button wire:click="setFeed('following')"
+                    :class="$wire.activeFeed === 'following' ? 'bg-[#ededee] text-primary font-semibold' :
+                        'text-gray-400'"
+                    class="px-4 py-1 rounded-md transition-colors cursor-pointer">
                     Following
                 </button>
             </div>
@@ -65,11 +70,11 @@ mount(function ($availableTags, $oldMessageLength) {
                             @focusout.away="focused = false; if(count === 0 && tags.length === 0) showTagInput = false"
                             @focusin="focused = true">
 
-                            <div x-show="isActive()" x-transition x-cloak class="mt-2">
-                                <trix-toolbar id="chirp_toolbar"></trix-toolbar>
+                            <div class="mt-2" :class="isActive() ? '' : 'invisible h-0 overflow-hidden'">
+                                <trix-toolbar id="chirp_toolbar" wire:ignore></trix-toolbar>
                             </div>
 
-                            <div class="transition-all duration-200 ease-in-out">
+                            <div class="transition-all duration-200 ease-in-out" wire:ignore>
                                 <trix-editor input="message_hidden" toolbar="chirp_toolbar"
                                     placeholder="What's on your mind?" @trix-focus="focused = true"
                                     @trix-blur="if(count === 0) focused = false"

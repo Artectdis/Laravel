@@ -27,10 +27,6 @@ class AppServiceProvider extends ServiceProvider
         if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
-        Volt::mount([
-        resource_path('views/livewire'),
-        resource_path('views/pages'), // Optional, if you use full-page components
-        ]);
 
         Blade::directive('safeHtml', function ($expression) {
             return "<?php 

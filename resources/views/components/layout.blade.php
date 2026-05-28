@@ -74,6 +74,8 @@
                 </svg>
 
             </button>
+
+            <livewire:notification-bell />
             @auth
                 <x-ts-dropdown position="bottom-end" class="nav-dropdown">
                     <x-slot:action>

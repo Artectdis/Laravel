@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chirp;
+use App\Models\User;
+use App\Notifications\NewChirp;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -71,6 +73,12 @@ class ChirpController extends Controller
         });
 
         $chirp->tags()->syncWithoutDetaching($tagIds);
+    }
+
+    $users = auth()->user()->followers()->get();
+
+    foreach ($users as $user) {
+        $user->notify(new NewChirp($chirp));
     }
 
     return back()->with('success', 'Chirp created successfully!');
