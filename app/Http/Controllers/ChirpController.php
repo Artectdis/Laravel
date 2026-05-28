@@ -53,6 +53,7 @@ class ChirpController extends Controller
         ]);
 
     $chirp = auth()->user()->chirps()->create($validated);
+    $chirp->load('user');
     
     $colors = ['#e57373','#64b5f6','#81c784','#ffb74d','#ba68c8','#4dd0e1'];
     if ($request->filled('tag_name')) {

@@ -23,7 +23,7 @@ class NewChirp extends Notification implements ShouldQueue
     {
         return [
             'message' => "{$this->chirp->user->name} posted a new chirp!",
-            'url' => route('chirps.index'), // Link to the post
+            'url' => url('/'),
         ];
     }
 
