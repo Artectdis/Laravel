@@ -1,5 +1,9 @@
 @import "tailwindcss";
 @plugin '@tailwindcss/forms';
+@plugin 'tailwind-scrollbar' {
+    nocompatible: true;
+};
+
 @import '../../vendor/tallstackui/tallstackui/css/v4.css'; 
 
 @source '../../vendor/tallstackui/tallstackui/**/*.php';
@@ -477,9 +481,6 @@ html {
   background: transparent;
 }
 
-html {
-  scrollbar-color: #888 #fff;
-}
 
 .dark-mode-filter .dark-toggle {
     fill: #000;
@@ -589,3 +590,32 @@ trix-editor {
 }
 
 @custom-variant dark (&:where(.dark-mode-filter, .dark-mode-filter *));
+
+@utility custom-scrollbar {
+    /* Set the overall width */
+    &::-webkit-scrollbar {
+        width: 4px !important;
+    }
+    /* Make the thumb a simple rectangle */
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--color-gray-300);
+        border-radius: 0px; /* Force sharp geometry */
+    }
+    /* Make the track a simple rectangle */
+    &::-webkit-scrollbar-track {
+        background-color: var(--color-gray-100);
+        border-radius: 0px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--color-gray-300);
+        border-radius: 0px !important; /* Force sharp corners */
+        /* This is the key: border-none and no padding makes it a flat rectangle */
+        border: none; 
+    }
+
+    /* 3. Kill the buttons again just to be safe */
+    &::-webkit-scrollbar-button {
+        display: none;
+    }
+}

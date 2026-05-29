@@ -51,16 +51,6 @@ Route::post('/logout', Logout::class)
     ->middleware('auth')
     ->name('logout');
 
-Route::get('/debug-auth', function () {
-    return response()->json([
-        'authed' => auth()->check(),
-        'user' => auth()->id(),
-        'session_id' => session()->getId(),
-        'session_driver' => config('session.driver'),
-        'session_cookie' => config('session.cookie'),
-    ]);
-});
-
 
 // Route::get('/blog', function () {
 //     return view('blog');

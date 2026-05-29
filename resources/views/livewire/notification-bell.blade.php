@@ -4,61 +4,86 @@ use function Livewire\Volt\{state, on, mount};
 
 state([
     'unreadCount' => 0,
+    'userId' => null,
     'notifications' => fn() => auth()->user()?->notifications()->latest()->take(10)->get() ?? collect(),
 ]);
 
 mount(function () {
+    $this->userId = auth()->id();
     $this->unreadCount = auth()->user()?->unreadNotifications()->count() ?? 0;
 });
 
 on([
-    'echo-private:App.Models.User.{auth.id},.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated' => function () {
+    'echo-private:App.Models.User.{userId},.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated' => function ($event) {
         $this->unreadCount = auth()->user()->unreadNotifications()->count();
         $this->notifications = auth()->user()->notifications()->latest()->take(10)->get();
+        $this->dispatch('notify-unread-count', count: $this->unreadCount);
     },
 ]);
 
-$markAsRead = function () {
+$markAllAsRead = function () {
     auth()->user()->unreadNotifications->markAsRead();
     $this->unreadCount = 0;
     $this->notifications = auth()->user()->notifications()->latest()->take(10)->get();
+    $this->dispatch('notify-unread-count', count: 0);
+};
+
+$markAsRead = function ($notificationId) {
+    $notification = auth()->user()->notifications()->find($notificationId);
+
+    if ($notification) {
+        $notification->markAsRead();
+    }
+
+    $this->unreadCount = auth()->user()->unreadNotifications()->count();
+    $this->notifications = auth()->user()->notifications()->latest()->take(10)->get();
+    $this->dispatch('notify-unread-count', count: $this->unreadCount);
 };
 
 ?>
 
-<div>
+<div x-data="{ unreadCount: {{ $unreadCount }} }" x-on:notify-unread-count.window="unreadCount = $event.detail.count">
     <x-ts-dropdown position="bottom-end">
         <x-slot:action>
-            <button class="relative p-2 cursor-pointer focus:outline-none group" x-on:click="show = !show">
-                <x-ts-icon name="bell" class="size-6 text-[#808080] group-hover:text-[#4697E7] transition-colors" />
-                @if ($unreadCount > 0)
-                    <span
-                        class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white">
-                        {{ $unreadCount }}
-                    </span>
-                @endif
+            <button class="relative p-2 focus:outline-none group" x-on:click="show = !show">
+                <x-ts-icon name="bell"
+                    class="size-6 text-[#808080] group-hover:text-[#4697E7] transition-colors !cursor-pointer" />
+                <span x-show="unreadCount > 0"
+                    class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white border-2 border-white !pointer-events-none"
+                    x-text="unreadCount">
+                </span>
             </button>
         </x-slot:action>
 
-        <x-ts-dropdown.items static separator class="!p-0 !bg-transparent">
-            <div class="w-80">
+        <x-ts-dropdown.items static separator class="!p-0 !bg-transparent !cursor-default">
+            <div class="w-100">
                 <div class="flex items-center justify-between border-b border-gray-100 px-4 py-2 bg-gray-50/50">
                     <h3 class="text-sm font-semibold text-gray-700">Notifications</h3>
-                    @if ($unreadCount > 0)
-                        <button wire:click="markAsRead" class="text-xs text-blue-600 hover:text-blue-800 font-medium">
-                            Mark all as read
-                        </button>
-                    @endif
+                    <button x-show="unreadCount > 0" wire:click="markAllAsRead"
+                        class="text-xs text-blue-600 !cursor-pointer pr-2 hover:text-blue-800 font-medium">
+                        Mark all as read
+                    </button>
                 </div>
 
-                <div class="max-h-96 overflow-y-auto">
+                <div class="max-h-96 overflow-y-auto custom-scrollbar">
                     @forelse($notifications as $notification)
                         <div
-                            class="border-b border-gray-50 px-4 py-3 text-sm hover:bg-gray-50 transition-colors {{ $notification->read_at ? 'opacity-60' : 'bg-blue-50/30' }}">
-                            <p class="text-gray-800 leading-tight">
-                                {{ $notification->data['message'] ?? 'New notification' }}</p>
-                            <span
-                                class="text-[10px] text-gray-400 mt-1 block">{{ $notification->created_at->diffForHumans() }}</span>
+                            class="group border-b border-gray-50 px-4 py-3 text-sm hover:bg-gray-50 transition-colors relative flex items-center justify-between {{ $notification->read_at ? 'opacity-60' : 'bg-blue-50/30' }}">
+                            <a href="{{ $notification->data['url'] ?? '/' }}" class="flex-1 pr-4">
+                                <p class="text-gray-800 leading-tight text-wrap">
+                                    {{ $notification->data['message'] ?? 'New notification' }}
+                                </p>
+                                <span class="text-[10px] text-gray-400 mt-1 block">
+                                    {{ $notification->created_at->diffForHumans() }}
+                                </span>
+                            </a>
+
+                            @if (!$notification->read_at)
+                                <button wire:click="markAsRead('{{ $notification->id }}')" title="Mark as read"
+                                    class="invisible group-hover:visible text-gray-400 hover:text-blue-600 transition-colors !cursor-pointer p-1">
+                                    <x-ts-icon name="check" class="size-4" />
+                                </button>
+                            @endif
                         </div>
                     @empty
                         <div class="px-4 py-8 text-center">

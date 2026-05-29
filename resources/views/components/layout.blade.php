@@ -22,7 +22,7 @@
 
 </head>
 
-<body x-data class="min-h-screen flex flex-col bg-base-200 font-sans">
+<body x-data class="min-h-screen flex flex-col bg-base-200 font-sans custom-scrollbar">
     <nav class="navbar bg-base-100">
         <div class="navbar-start">
             <a href="/" class="mr-2">

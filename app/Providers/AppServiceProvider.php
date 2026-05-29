@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\URL;
 use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Blade;
@@ -34,6 +35,9 @@ class AppServiceProvider extends ServiceProvider
                 echo (new \Symfony\Component\HtmlSanitizer\HtmlSanitizer(\$config))->sanitize($expression); 
             ?>";
         });
+        Broadcast::routes(['middleware' => ['web', 'auth']]);
+    
+        require base_path('routes/channels.php');
     }
 
 }

@@ -80,7 +80,7 @@
                                         <div class="flex flex-wrap gap-1">
                                             @foreach ($chirp->tags as $tag)
                                                 <a href="/?tag={{ $tag->name }}" onclick="event.stopPropagation()"
-                                                    class="opacity-100 badge badge-sm !text-white dark:!text-black hover:ring-2 dark:hover:ring-black hover:ring-white border-none !text-xs !px-2 !py-1 rounded-full transition-all cursor-pointer"
+                                                    class="opacity-100 badge badge-sm !text-white dark:!text-black hover:ring-2 hover:brightness-110 dark:hover:ring-black hover:ring-white border-none !text-xs !px-2 !py-1 rounded-full transition-all cursor-pointer"
                                                     style="background-color: {{ $tag->color }}">
                                                     #{{ $tag->name }}
                                                 </a>
@@ -251,23 +251,7 @@
             </div>
         </form>
         <div class="-mt-2">
-            @forelse ($chirp->replies as $reply)
-                @include('chirps._reply', ['reply' => $reply, 'depth' => 1])
-            @empty
-                <div class="hero py-12">
-                    <div class="hero-content text-center">
-                        <div>
-                            <svg class="mx-auto h-12 w-12 opacity-30" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-                                </path>
-                            </svg>
-                            <p class="mt-4 text-base-content/60">No replies yet. Be the first to reply!</p>
-                        </div>
-                    </div>
-                </div>
-            @endforelse
+            <livewire:chirp-replies :chirp="$chirp" />
         </div>
     </div>
 </x-layout>
