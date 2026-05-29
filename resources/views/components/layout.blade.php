@@ -6,6 +6,9 @@
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.classList.add('dark-mode-filter');
         }
+        if (localStorage.getItem('cool') === 'true') {
+            document.documentElement.classList.add('cool-filter');
+        }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -127,9 +127,22 @@ class ChirpController extends Controller
         $this->authorize('update', $chirp);
         $oldMessageLength = mb_strlen(trim(strip_tags(str_replace('&nbsp;', ' ', $chirp->message))));
 
-        return view('chirps.edit', compact('chirp'), [
-            'availableTags' => Tag::orderBy('name')->get(),
+        return view('chirps.edit', [
+            'chirp' => $chirp,
             'oldMessageLength' => $oldMessageLength,
+            'availableTags' => Tag::withCount('chirps')
+                ->orderBy('chirps_count', 'desc')
+                ->get()
+                ->map(fn($tag) => [
+                    'caption' => $tag->chirps_count . ' ' . Str::plural('Chirp', $tag->chirps_count),
+                    'name' => $tag->name,
+                    'color' => $tag->color,
+                ])
+                ->toArray(),
+            'chirpTags' => $chirp->tags->map(fn($tag) => [
+                'name' => $tag->name,
+                'color' => $tag->color,
+            ])->toArray(),
         ]);
     }
 

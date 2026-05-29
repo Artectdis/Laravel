@@ -361,8 +361,8 @@
 
                 <h2 id="settings" class="scroll-mt-20 text-2xl font-bold mt-12 mb-2">Your Settings</h2>
                 <hr class="border-gray-300 mb-4" />
-                <div class="flex flex-col gap-2">
-                    <div class="flex flex-row gap-2 w-56 card p-4 outline-0"><svg xmlns="http://www.w3.org/2000/svg"
+                <div class="grid grid-cols-3 justify-between gap-2">
+                    <div class="flex flex-row gap-2 w-full card p-4 outline-0"><svg xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" class="size-6 fill-[#808080]">
                             <path fill-rule="evenodd"
                                 d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z"
@@ -372,7 +372,7 @@
                             checked="checked" />
                     </div>
 
-                    <div class="flex flex-row gap-2 w-56 card p-4 outline-0"><svg xmlns="http://www.w3.org/2000/svg"
+                    <div class="flex flex-row gap-2 w-full card p-4 outline-0"><svg xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" class="size-6 fill-[#808080]">
                             <path
                                 d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
@@ -383,6 +383,14 @@
 
                         Notifications <input type="checkbox" class="toggle toggle-primary ml-auto"
                             checked="checked" />
+                    </div>
+                    <div class="flex flex-row gap-2 w-full card p-4 outline-0"><svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24" class="size-6 fill-[#808080]">
+                            <path fill-rule="evenodd"
+                                d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Test Theme <input type="checkbox" id="cool-toggle" class="toggle toggle-primary ml-auto" />
                     </div>
                 </div>
 
@@ -419,11 +427,16 @@
 
         <script>
             const checkbox = document.getElementById('dark-mode-toggle');
+            const checkbox2 = document.getElementById('cool-toggle');
             checkbox.checked = document.documentElement.classList.contains('dark-mode-filter');
 
             checkbox.addEventListener('change', () => {
                 document.documentElement.classList.toggle('dark-mode-filter', checkbox.checked); // html +- dark
                 localStorage.setItem('theme', checkbox.checked ? 'dark' : 'light'); // theme.dark
+            });
+            checkbox2.addEventListener('change', () => {
+                document.documentElement.classList.toggle('cool-filter', checkbox2.checked);
+                localStorage.setItem('cool', checkbox2.checked ? 'true' : 'false');
             });
         </script>
 </x-layout>

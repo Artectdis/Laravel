@@ -55,12 +55,12 @@ $markAsRead = function ($notificationId) {
             </button>
         </x-slot:action>
 
-        <x-ts-dropdown.items static separator class="!p-0 !bg-transparent !cursor-default">
-            <div class="w-100">
+        <x-ts-dropdown.items static separator class="!p-0 !bg-transparent !border-0 !cursor-default">
+            <div class="w-100 !bg-transparent">
                 <div class="flex items-center justify-between border-b border-gray-100 px-4 py-2 bg-gray-50/50">
                     <h3 class="text-sm font-semibold text-gray-700">Notifications</h3>
                     <button x-show="unreadCount > 0" wire:click="markAllAsRead"
-                        class="text-xs text-blue-600 !cursor-pointer pr-2 hover:text-blue-800 font-medium">
+                        class="text-xs text-blue-400 dark:text-gray-300 dark:hover:!text-blue-800 !cursor-pointer pr-2 hover:text-blue-800 font-medium keep-color">
                         Mark all as read
                     </button>
                 </div>
@@ -68,7 +68,7 @@ $markAsRead = function ($notificationId) {
                 <div class="max-h-96 overflow-y-auto custom-scrollbar">
                     @forelse($notifications as $notification)
                         <div
-                            class="group border-b border-gray-50 px-4 py-3 text-sm hover:bg-gray-50 transition-colors relative flex items-center justify-between {{ $notification->read_at ? 'opacity-60' : 'bg-blue-50/30' }}">
+                            class="group border-b border-gray-50 dark:border-gray-300 dark:bg-red dark:hover:!bg-gray-50/80 px-4 py-3 text-sm hover:bg-gray-50 transition-colors relative flex items-center justify-between {{ $notification->read_at ? 'opacity-60' : 'bg-blue-50/30' }}">
                             <a href="{{ $notification->data['url'] ?? '/' }}" class="flex-1 pr-4">
                                 <p class="text-gray-800 leading-tight text-wrap">
                                     {{ $notification->data['message'] ?? 'New notification' }}
