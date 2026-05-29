@@ -31,7 +31,7 @@
 
             <div class="min-w-0 flex-1">
                 <div class="flex justify-between w-full">
-                    <div class="flex gap-1 flex-wrap">
+                    <div class="flex gap-1 flex-wrap mr-2">
                         <a class="text-sm font-semibold hover:underline !text-black" href="{{ $profileUrl }}"
                             onclick="event.stopPropagation()">
                             {{ $chirp->user ? $chirp->user->name : 'Anonymous' }}
@@ -46,7 +46,8 @@
                             </svg>
                         @endif
                         <span class="text-base-content/60">·</span>
-                        <span class="text-sm text-base-content/60">{{ $chirp->created_at->diffForHumans() }}</span>
+                        <span
+                            class="text-sm text-base-content/60 whitespace-nowrap">{{ $chirp->created_at->diffForHumans() }}</span>
                         @if ($chirp->updated_at->gt($chirp->created_at->addSeconds(5)))
                             <span class="text-sm text-base-content/60">(edited)</span>
                         @endif
@@ -82,8 +83,8 @@
                                     @method('DELETE')
                                 </form>
                             @else
-                                <livewire:follow :user="$chirp->user_id" />
-                                <livewire:block :user="$chirp->user_id" />
+                                <livewire:follow :user="$chirp->user" />
+                                <livewire:block :user="$chirp->user" />
                             @endif
                         </x-ts-dropdown>
                     </div>

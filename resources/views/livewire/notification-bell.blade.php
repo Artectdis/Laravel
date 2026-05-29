@@ -45,11 +45,11 @@ $markAsRead = function ($notificationId) {
 <div x-data="{ unreadCount: {{ $unreadCount }} }" x-on:notify-unread-count.window="unreadCount = $event.detail.count">
     <x-ts-dropdown position="bottom-end">
         <x-slot:action>
-            <button class="relative p-2 focus:outline-none group" x-on:click="show = !show">
-                <x-ts-icon name="bell"
+            <button x-cloak class="relative p-2 focus:outline-none group" x-on:click="show = !show">
+                <x-ts-icon name="bell" x-cloak
                     class="size-6 text-[#808080] group-hover:text-[#4697E7] transition-colors !cursor-pointer" />
                 <span x-show="unreadCount > 0"
-                    class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white border-2 border-white !pointer-events-none"
+                    class="absolute top-1 right-1 -mx-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white border-2 border-white !pointer-events-none"
                     x-text="unreadCount">
                 </span>
             </button>

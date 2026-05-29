@@ -8,15 +8,7 @@
                     class="!-mt-1 !mb-0.2 text-xs text-blue-400 font-medium bg-white dark:bg-gray-200 dark:hover:!text-black rounded-full py-1 px-2 w-fit hover:bg-blue-500 hover:!text-white transition-colors ease-in-out">
                     <span>Replying to <span class="font-semibold">{{ $replying->user->name }}</span></span>
                 </a>
-                <a href="/chirps/{{ $replying->id }}" onclick="event.stopPropagation()"
-                    class="!-mt-1 !mb-0.2 text-xs text-blue-400 font-medium bg-white dark:bg-gray-200 dark:hover:!text-black rounded-full py-1 px-2 w-fit hover:bg-blue-500 hover:!text-white transition-colors ease-in-out">
-                    <span>Replying to <span class="font-semibold">{{ $replying->user->name }}</span></span>
-                </a>
             </div>
-            <a href="/chirps/{{ $replying->id }}" onclick="event.stopPropagation()"
-                class="!-mt-1 !mb-0.2 text-xs text-blue-400 font-medium bg-white dark:bg-gray-200 dark:hover:!text-black rounded-full py-1 px-2 w-fit hover:bg-blue-500 hover:!text-white transition-colors ease-in-out">
-                <span>Replying to <span class="font-semibold">{{ $replying->user->name }}</span></span>
-            </a>
         @endif
         <div class="flex space-x-3">
             @php $profileUrl = $chirp->user ? "/profile/{$chirp->user->id}" : "#"; @endphp

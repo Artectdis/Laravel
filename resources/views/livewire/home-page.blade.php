@@ -20,7 +20,7 @@ $setFeed = function (string $feed) {
 <div>
     <div class="max-w-2xl mx-auto">
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold">Latest Chirps</h1>
+            <h1 class="text-3xl font-bold mr-2">Latest Chirps</h1>
 
             <div class="bg-[#f7f7f8] text-gray-400 flex border border-black/10 rounded-[10px] p-1 rounded-lg">
                 <button wire:click="setFeed('global')"

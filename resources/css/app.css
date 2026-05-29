@@ -332,7 +332,7 @@ input[type="date"]:valid {
 }
 
 :root {
-  --bg-color: #ededee;
+  --bg-color: #ededed;
   --text-color: #000000;
 }
 
@@ -343,7 +343,7 @@ input[type="date"]:valid {
 
 body {
     font-family: 'Instrument Sans', sans-serif;
-    background-color: #ededee;
+    background-color: #ededed;
     color: var(--text-color);
     transition: background-color 0.3s ease;
 }
@@ -354,7 +354,7 @@ body {
 }
 
 .dark-mode-filter .light-toggle {
-    fill: #fff !important;
+    fill: #808080 !important;
     filter: invert(1) hue-rotate(180deg) !important;
 }
 
@@ -481,9 +481,8 @@ html {
   background: transparent;
 }
 
-
-.dark-mode-filter .dark-toggle {
-    fill: #000;
+html.dark-mode-filter {
+  background: #EDEDED !important;
 }
 
 
@@ -626,13 +625,35 @@ trix-editor {
     filter: saturate(10) !important;
 }
 
-.cool-filter body {
+/* AFTER */
+html.cool-filter body {
+  background: transparent;
+}
+html.cool-filter {
   background: linear-gradient(to bottom, #fff4 0%, 80%, #478ade 100%);
   background-attachment: fixed;
   background-repeat: no-repeat;
+  min-height: 100%;
 }
-.dark-mode-filter.cool-filter body {
+html.dark-mode-filter.cool-filter {
   background: linear-gradient(to bottom, #fff 0%, 80%, #d1e6ff 100%);
   background-attachment: fixed;
   background-repeat: no-repeat;
+  min-height: 100%;
+}
+
+.trix-content ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.trix-content ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.trix-content li {
+    margin: 0.25rem 0;
 }

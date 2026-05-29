@@ -15,11 +15,13 @@ document.addEventListener('alpine:init', () => {
     });
 
     document.addEventListener('livewire:navigated', () => {
-            const isDark = localStorage.getItem('theme') === 'dark';
-            document.documentElement.classList.toggle('dark-mode-filter', isDark);
-        });
+        const isDark = localStorage.getItem('theme') === 'dark';
+        const isCool = localStorage.getItem('cool') === 'true';
+        document.documentElement.classList.toggle('dark-mode-filter', isDark);
+        document.documentElement.classList.toggle('cool-filter', isCool);
+    });
 });
 
-document.addEventListener("trix-file-accept", function(event) {
+document.addEventListener("trix-file-accept", function (event) {
     event.preventDefault();
 });

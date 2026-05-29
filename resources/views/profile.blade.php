@@ -1,7 +1,6 @@
 <x-layout>
-    <div class="profile-page grid min-h-screen grid-cols-[280px_1fr]">
-
-        <aside class="sticky card top-0 h-screen bg-[#f7f7f8] p-6 border-r border-gray-200">
+    <div class="profile-page grid min-h-screen grid-cols-1 md:grid-cols-[280px_1fr]">
+        <aside class="hidden md:block sticky card top-0 h-screen bg-[#f7f7f8] p-6 border-r border-gray-200">
             <nav class="space-y-2">
                 <a href="#profile" class="block p-2 hover:bg-white rounded">
                     <div class="flex flex-row gap-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
@@ -75,7 +74,7 @@
                         <h1 class="text-3xl font-bold break-words text-wrap w-full">{{ $user->name }}</h1>
                         <p>Welcome to your settings!</p>
                     </div>
-                    <div class="flex justify-end items-center gap-4">
+                    <div class="flex flex-col md:flex-row -mt-14 md:mt-0 justify-end items-center gap-4">
                         <form action="/settings/avatar" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PATCH')
@@ -116,17 +115,17 @@
                         </div>
                         <div class="col-span-2">Bio:
                             <textarea name="bio" id="bio" rows="4"
-                                class="w-full textarea textarea-bordered resize-none min-h-12 max-h-60" maxlength="500"
+                                class="w-full textarea textarea-bordered scrollbar-thin resize-none min-h-12 max-h-60" maxlength="500"
                                 placeholder="Tell us a little about yourself...">{{ old('bio', $user->bio) }}</textarea>
                             @error('bio')
                                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                             @enderror
 
                         </div>
-                        <div class="flex items-center">Joined {{ $user->created_at->format('F d, Y') }}</div>
+                        <div class="flex md:items-center">Joined {{ $user->created_at->format('F d, Y') }}</div>
                         <div>
                             @if (!auth()->user()->hasVerifiedEmail())
-                                <div class="flex items-center">
+                                <div class="flex flex-col md:flex-row gap-2 items-center">
                                     <div class="mr-4">Unverified</div>
                                     <button type="button"
                                         onclick="event.preventDefault(); document.getElementById('verify-form').submit();"
@@ -149,11 +148,12 @@
                 </div>
                 <div class="mt-4 flex items-center justify-end"></div>
             </div>
-            <div class><button type="submit" class="btn btn-primary btn-sm float-right duration-0">Save</button>
+            <div class><button type="submit"
+                    class="btn btn-primary btn-sm float-left md:float-right duration-0">Save</button>
             </div>
             </form>
 
-            <h2 id="chirps" class="scroll-mt-20 text-2xl font-bold mt-12 mb-2">Your Chirps</h2>
+            <h2 id="chirps" class="scroll-mt-20 text-2xl font-bold mt-16 mb-2">Your Chirps</h2>
             <hr class="border-gray-300 mb-4" />
             <div class="flex flex-col gap-y-2">
                 @forelse ($chirps as $chirp)
@@ -175,7 +175,7 @@
                 {{ $replies->withQueryString()->onEachSide(1)->fragment('replies')->links() }}
             </div>
 
-            <div id="follow" class="flex gap-8 scroll-mt-20 mt-20">
+            <div id="follow" class="flex flex-1 flex-col md:flex-row gap-8 scroll-mt-20 mt-20">
                 <div class="flex-1">
                     <h2 class="text-2xl font-bold mb-2">Your Following</h2>
                     <hr class="border-gray-300 mb-4" />
@@ -361,7 +361,7 @@
 
                 <h2 id="settings" class="scroll-mt-20 text-2xl font-bold mt-12 mb-2">Your Settings</h2>
                 <hr class="border-gray-300 mb-4" />
-                <div class="grid grid-cols-3 justify-between gap-2">
+                <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] justify-between gap-2">
                     <div class="flex flex-row gap-2 w-full card p-4 outline-0"><svg xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" class="size-6 fill-[#808080]">
                             <path fill-rule="evenodd"
@@ -369,7 +369,7 @@
                                 clip-rule="evenodd" />
                         </svg>
                         Dark Mode <input type="checkbox" id="dark-mode-toggle" class="toggle toggle-primary ml-auto"
-                            checked="checked" />
+                            x-bind:checked="$store.theme.current === 'dark'" @change="$store.theme.toggle()" />
                     </div>
 
                     <div class="flex flex-row gap-2 w-full card p-4 outline-0"><svg xmlns="http://www.w3.org/2000/svg"
@@ -429,6 +429,7 @@
             const checkbox = document.getElementById('dark-mode-toggle');
             const checkbox2 = document.getElementById('cool-toggle');
             checkbox.checked = document.documentElement.classList.contains('dark-mode-filter');
+            checkbox2.checked = document.documentElement.classList.contains('cool-filter');
 
             checkbox.addEventListener('change', () => {
                 document.documentElement.classList.toggle('dark-mode-filter', checkbox.checked); // html +- dark

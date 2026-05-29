@@ -200,8 +200,9 @@ class ChirpController extends Controller
     public function destroy(Chirp $chirp)
     {
         $this->authorize('delete', $chirp);
+        $parentId = $chirp->parent_id; 
         $chirp->delete();
-
-        return back()->with('success', 'Chirp deleted successfully!');
+        $redirectTo = $parentId ? "/chirps/{$parentId}" : '/';
+        return redirect($redirectTo)->with('success', 'Chirp deleted successfully!');
     }
 }

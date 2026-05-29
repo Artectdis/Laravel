@@ -11,11 +11,14 @@ state(['query' => fn() => request('query')]);
 // 3. Perform the database search
 $chirps = computed(function () {
     $blockedIds = auth()->check() ? auth()->user()->blocks()->pluck('blocked_user_id') : collect();
+
     return Chirp::where('message', 'ilike', "%{$this->query}%")
         ->whereNotIn('user_id', $blockedIds)
+        ->orderByRaw('parent_id IS NOT NULL ASC')
         ->latest()
         ->paginate(10);
 });
+
 ?>
 
 <div class="px-8">
@@ -31,7 +34,7 @@ $chirps = computed(function () {
 
         <div class="flex flex-col gap-2 mb-2">
             @forelse ($this->chirps as $chirp)
-                <x-chirp :chirp="$chirp" />
+                <x-chirp :chirp="$chirp" :replying="$chirp->parent ?? null" />
             @empty
                 <p class="text-gray-500 text-lg">No chirps found matching your search.</p>
             @endforelse
