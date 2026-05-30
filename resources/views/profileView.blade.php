@@ -19,7 +19,7 @@
                 <div>
                     <div class="min-w-0">
                         <div class="flex flex-row gap-2 items-center">
-                            <h1 class="text-3xl font-bold break-words self-center w-auto text-wrap">
+                            <h1 class="text-3xl font-bold break-words self-center w-auto max-w-[80%] text-wrap">
                                 {{ $user->name }}
                             </h1>
                             @if ($user->email_verified_at)
@@ -122,10 +122,14 @@
                         @forelse ($replies as $reply)
                             <x-chirp :chirp="$reply" />
                         @empty
-                            <p class="text-gray-500 text-lg">{{ $user->name }} has not created any replies yet.</p>
+                            <p class="text-gray-500 text-lg truncate flex-1 min-w-0">
+                                {{ $user->name }} has not created any replies yet.
+                            </p>
                         @endforelse
+
                         {{ $replies->onEachSide(1)->links() }}
                     </div>
+
                 </div>
             </div>
 

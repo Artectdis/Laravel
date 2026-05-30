@@ -80,8 +80,8 @@
 
             </button>
 
-            <livewire:notification-bell />
             @auth
+                <livewire:notification-bell />
                 <x-ts-dropdown position="bottom-end" class="nav-dropdown">
                     <x-slot:action>
                         {{-- Fused: Your custom pill styling used as the dropdown trigger --}}
@@ -89,9 +89,12 @@
                             class="cursor-pointer topbar-profile !-ml-2 mr-2 md:!ml-3 flex flex-row bg-white hover:bg-gray-100 ring-[#E4E4E5] hover:ring-2 rounded-full transition-all duration-500 ease-in-out md:py-1 md:px-2 p-0 gap-2 items-center text-sm text-black focus:outline-none"
                             x-on:click="show = !show">
 
-                            <span class="hidden md:block"><strong>{{ auth()->user()->name }}</strong></span>
+                            <span class="hidden md:block min-w-0 max-w-[150px] w-full truncate">
+                                <strong>{{ auth()->user()->name }}</strong>
+                            </span>
 
-                            <img src="{{ auth()->user()->avatar_url }}" class="nav-avatar size-7 rounded-full">
+                            <img src="{{ auth()->user()->avatar_url }}"
+                                class="nav-avatar size-7 rounded-full flex-shrink-0">
                         </button>
                     </x-slot:action>
 
@@ -116,7 +119,7 @@
 
                 </x-ts-dropdown>
             @else
-                <a href="/login" class="btn btn-ghost btn-sm">Sign In</a>
+                <a href="/login" class="btn btn-ghost btn-sm ml-2 md:ml-0">Sign In</a>
                 <a href="{{ route('register') }}" class="btn btn-primary btn-sm">Sign Up</a>
             @endauth
         </div>

@@ -13,6 +13,19 @@
 
                             <span>Replying to <span
                                     class="font-semibold">{{ $chirp->parentUser->user->name }}</span></span>
+
+                            @if ($chirp->tags->isNotEmpty())
+                                <div class="flex flex-wrap gap-1 px-4 pt-3 pb-0">
+                                    @foreach ($chirp->tags as $tag)
+                                        <a href="/?tag={{ $tag->name }}"
+                                            class="badge badge-sm border-none !text-white dark:!text-black !text-xs !px-2 !py-1 rounded-full hover:brightness-110 transition-all"
+                                            style="background-color: {{ $tag->color }}">
+                                            #{{ $tag->name }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+
                         </div>
                         <div class="ml-6 text-gray-500 text-sm italic">
                             {{ Str::limit(strip_tags($chirp->parent->message), 60) }}
@@ -31,6 +44,17 @@
                         Return
                     </div>
                 </a>
+                @if ($chirp->tags->isNotEmpty())
+                    <div class="flex flex-wrap gap-1 pb-0 mb-4 -mt-2">
+                        @foreach ($chirp->tags as $tag)
+                            <a href="/?tag={{ $tag->name }}"
+                                class="badge badge-sm border-none !text-white dark:!text-black !text-xs !px-2 !py-1 rounded-full hover:brightness-110 transition-all"
+                                style="background-color: {{ $tag->color }}">
+                                #{{ $tag->name }}
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
             @endif
             <div class="flex space-x-3">
 
@@ -75,19 +99,6 @@
                             </div>
                             <!-- Only show edit/delete if user owns the chirp -->
                             <div class="flex relative z-20 !ml-auto" onclick="event.stopPropagation()">
-                                <div class="flex flex-wrap gap-1 ml-auto mr-4">
-                                    @if ($chirp->tags->isNotEmpty())
-                                        <div class="flex flex-wrap gap-1">
-                                            @foreach ($chirp->tags as $tag)
-                                                <a href="/?tag={{ $tag->name }}" onclick="event.stopPropagation()"
-                                                    class="opacity-100 badge badge-sm !text-white dark:!text-black hover:ring-2 hover:brightness-110 dark:hover:ring-black hover:ring-white border-none !text-xs !px-2 !py-1 rounded-full transition-all cursor-pointer"
-                                                    style="background-color: {{ $tag->color }}">
-                                                    #{{ $tag->name }}
-                                                </a>
-                                            @endforeach
-                                        </div>
-                                    @endif
-                                </div>
                                 <x-ts-dropdown icon="ellipsis-horizontal" static>
                                     @if (auth()->check() && auth()->id() === $chirp->user_id)
                                         <a href="/chirps/{{ $chirp->id }}/edit">
@@ -113,7 +124,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-4 text-wrap break-words">@safeHtml($chirp->message)</div>
+            <div class="mt-4 text-wrap break-words trix-content">@safeHtml($chirp->message)</div>
             <div class="py-4">
                 <livewire:like :chirp="$chirp" />
             </div>
@@ -180,7 +191,7 @@
 
                                 <template x-for="tag in tags" :key="tag">
                                     <span
-                                        class="badge badge-sm dark:text-black bg-primary text-white border-none px-2 py-1 rounded-full flex items-center text-xs">
+                                        class="badge badge-sm dark:text-black bg-primary text-white dark:!text-black border-none px-2 py-1 rounded-full flex items-center text-xs">
                                         #<span x-text="tag" class="-mx-2"></span>
                                         <button type="button" @mousedown.prevent @click="removeTag(tag)"
                                             class="ml-1 opacity-60 hover:opacity-100 leading-none">×</button>

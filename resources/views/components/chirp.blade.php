@@ -31,10 +31,10 @@
 
             <div class="min-w-0 flex-1">
                 <div class="flex justify-between w-full">
-                    <div class="flex gap-1 flex-wrap mr-2">
-                        <a class="text-sm font-semibold hover:underline !text-black" href="{{ $profileUrl }}"
-                            onclick="event.stopPropagation()">
-                            {{ $chirp->user ? $chirp->user->name : 'Anonymous' }}
+                    <div class="flex gap-1 flex-wrap min-w-0">
+                        <a class="text-sm font-semibold hover:underline !text-black truncate max-w-[140px] sm:max-w-none"
+                            href="{{ $profileUrl }}" onclick="event.stopPropagation()">
+                            {{ $chirp->user->name }}
                         </a>
                         @if ($chirp->user?->email_verified_at)
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
@@ -45,24 +45,56 @@
                                 <title>Verified</title>
                             </svg>
                         @endif
-                        <span class="text-base-content/60">·</span>
                         <span
-                            class="text-sm text-base-content/60 whitespace-nowrap">{{ $chirp->created_at->diffForHumans() }}</span>
-                        @if ($chirp->updated_at->gt($chirp->created_at->addSeconds(5)))
-                            <span class="text-sm text-base-content/60">(edited)</span>
+                            class="flex gap-1 -mt-2 mr-2 items-center whitespace-nowrap text-sm text-base-content/60 leading-8">
+                            <span>·</span>
+                            <span>{{ $chirp->created_at->diffForHumans() }}</span>
+                            @if ($chirp->updated_at->gt($chirp->created_at->addSeconds(5)))
+                                <span>(edited)</span>
+                            @endif
+                        </span>
+                    </div>
+                    {{-- Mobile: show 1 tag + N --}}
+                    <div class="flex sm:hidden gap-1 -mt-2 items-center ml-auto mr-4 min-w-0 max-w-[120px]">
+                        @if ($chirp->tags->isNotEmpty())
+                            @php
+                                $firstTag = $chirp->tags->first();
+                                $extraCount = $chirp->tags->count() - 1;
+                            @endphp
+                            <a href="/?tag={{ $firstTag->name }}" onclick="event.stopPropagation()"
+                                class="badge badge-sm border-none !text-xs !px-2 !py-1 rounded-full min-w-0 flex items-center overflow-hidden flex-shrink"
+                                style="background-color: {{ $firstTag->color }}; color: white;">
+                                <span class="truncate block min-w-0">#{{ $firstTag->name }}</span>
+                            </a>
+                            @if ($extraCount > 0)
+                                <span
+                                    class="badge badge-sm border border-base-300 bg-base-200 text-base-content/60 !text-xs !px-2 !py-1 rounded-full whitespace-nowrap flex-none">
+                                    +{{ $extraCount }}
+                                </span>
+                            @endif
                         @endif
                     </div>
-                    <div class="flex flex-wrap gap-1 ml-auto items-center mr-4">
+
+                    {{-- Desktop: show up to 3 tags + N --}}
+                    <div class="hidden sm:flex gap-1 -mt-2 items-center ml-auto mr-4 min-w-0 max-w-[240px]">
                         @if ($chirp->tags->isNotEmpty())
-                            <div class="flex flex-wrap gap-1 ml-auto items-center">
-                                @foreach ($chirp->tags as $tag)
-                                    <a href="/?tag={{ $tag->id }}" onclick="event.stopPropagation()"
-                                        class="opacity-100 badge badge-sm !text-white dark:!text-black hover:ring-2 hover:brightness-110 dark:hover:brightness-80 dark:hover:ring-black hover:ring-white border-none !text-xs !px-2 !py-1 rounded-full transition-all cursor-pointer"
-                                        style="background-color: {{ $tag->color }}">
-                                        #{{ $tag->name }}
-                                    </a>
-                                @endforeach
-                            </div>
+                            @php
+                                $visible = $chirp->tags->take(3);
+                                $extraCount = $chirp->tags->count() - 3;
+                            @endphp
+                            @foreach ($visible as $tag)
+                                <a href="/?tag={{ $tag->name }}" onclick="event.stopPropagation()"
+                                    class="badge badge-sm border-none !text-xs !px-2 !py-1 rounded-full min-w-0 flex items-center overflow-hidden flex-shrink"
+                                    style="background-color: {{ $tag->color }}; color: white;">
+                                    <span class="truncate block min-w-0">#{{ $tag->name }}</span>
+                                </a>
+                            @endforeach
+                            @if ($extraCount > 0)
+                                <span
+                                    class="badge badge-sm border border-base-300 bg-base-200 text-base-content/60 !text-xs !px-2 !py-1 rounded-full whitespace-nowrap flex-none">
+                                    +{{ $extraCount }}
+                                </span>
+                            @endif
                         @endif
                     </div>
                     <!-- Only show edit/delete if user owns the chirp -->
