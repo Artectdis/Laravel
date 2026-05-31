@@ -19,6 +19,10 @@ services:
         value: production
       - key: APP_DEBUG
         value: "false"
+      - key: VITE_PUSHER_APP_KEY
+        value: "457bad3e2d611af861ed"
+      - key: VITE_PUSHER_APP_CLUSTER
+        value: "ap1"
 
   - type: pserv
     name: laravel-postgres
