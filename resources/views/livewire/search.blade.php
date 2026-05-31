@@ -21,7 +21,7 @@ $performSearch = function () {
     </button>
 
     <div @click.outside="open = false" @keydown.escape.window="open = false"
-        :class="open ? 'fixed top-16 left-1/2 -translate-x-1/2 z-50 flex w-[90vw] max-w-[320px]' :
+        :class="open ? 'fixed top-16 left-1/2 -translate-x-1/2 z-50 flex w-[90vw] max-w-[320px] max-md:z-[999]' :
             'hidden md:flex md:relative md:w-full md:left-auto md:translate-x-0'"
         x-cloak class="search-div text-gray-400 focus-within:text-gray-600 md:max-w-md">
         <div class="relative w-full">
