@@ -9,10 +9,12 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpq-dev \
+    libzip-dev \
+    zip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql
+RUN docker-php-ext-install pdo pdo_pgsql zip
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
@@ -24,9 +26,6 @@ WORKDIR /var/www/html
 
 # Copy application files
 COPY . .
-
-# Set correct permissions
-RUN chown -R www-data:www-data /var/www/html
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -43,7 +42,9 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
+# Create folders and set permissions
 RUN mkdir -p storage/logs bootstrap/cache && \
+    chown -R www-data:www-data /var/www/html && \
     chmod -R 775 storage bootstrap/cache
 
 # Start Apache
