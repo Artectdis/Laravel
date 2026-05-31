@@ -34,6 +34,11 @@ COPY . .
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+ARG VITE_PUSHER_APP_KEY=457bad3e2d611af861ed
+ARG VITE_PUSHER_APP_CLUSTER=ap1
+ENV VITE_PUSHER_APP_KEY=$VITE_PUSHER_APP_KEY
+ENV VITE_PUSHER_APP_CLUSTER=$VITE_PUSHER_APP_CLUSTER
+
 # Install PHP and Node dependencies
 RUN composer install --no-interaction --optimize-autoloader --no-dev && \
     npm install --ignore-scripts && \
