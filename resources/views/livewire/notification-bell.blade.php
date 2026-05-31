@@ -96,7 +96,7 @@ $markAsRead = function ($notificationId) {
 
                             @if (!$notification->read_at)
                                 <button wire:click="markAsRead('{{ $notification->id }}')" title="Mark as read"
-                                    class="invisible group-hover:visible text-gray-400 -ml-10 mt-8 hover:text-blue-600 transition-colors !cursor-pointer p-1">
+                                    class="invisible group-hover:visible text-gray-400 !-ml-12 mt-8 hover:text-blue-600 transition-colors !cursor-pointer p-1">
                                     <x-ts-icon name="check" class="size-4" />
                                 </button>
                             @endif
