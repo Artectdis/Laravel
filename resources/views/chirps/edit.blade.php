@@ -94,25 +94,27 @@
 
                                     {{-- Tag picker panel --}}
                                     <div x-show="showTagInput && isActive()" x-transition x-cloak
-                                        x-data="{ search: '' }" class="bg-white rounded-lg p-3 flex flex-col gap-2"
+                                        x-data="{ search: '' }"
+                                        class="bg-white rounded-lg p-3 flex flex-col gap-2 dark:bg-[#ccc]"
                                         @mousedown="if (!['INPUT', 'BUTTON', 'TEXTAREA'].includes($event.target.tagName)) $event.preventDefault()">
 
                                         <input type="text" x-model="search" placeholder="Search tags..."
                                             class="input input-sm input-bordered w-full text-sm" />
 
-                                        <div class="flex flex-col max-h-60 overflow-y-auto rounded-lg"
+                                        <div class="flex flex-col max-h-60 overflow-y-auto rounded-lg custom-scrollbar [&::-webkit-scrollbar]:!w-2"
                                             @mousedown="if (!['INPUT', 'BUTTON', 'TEXTAREA'].includes($event.target.tagName)) $event.preventDefault()">
 
                                             <template
                                                 x-for="tag in availableTags.filter(t => t.name.includes(search.toLowerCase().trim()))"
                                                 :key="tag.name">
-                                                <div class="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0"
+                                                <div class="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-300 transition-colors border-b border-gray-100 dark:border-gray-400 last:border-0"
                                                     @mousedown.prevent
                                                     @click="tags.some(t => t.name === tag.name)
                                                         ? removeTag(tag.name)
                                                         : (tags.length < 5 && tags.push({ name: tag.name, color: tag.color }))"
                                                     :class="tags.some(t => t.name === tag.name) ?
-                                                        'bg-blue-100 hover:!bg-blue-200 dark:bg-primary-900' : ''">
+                                                        'bg-blue-100 hover:!bg-blue-200' :
+                                                        ''">
 
                                                     <div class="flex items-center gap-3">
                                                         <span
@@ -164,10 +166,10 @@
                                 </div>
                             </div>
 
-                            @if ($errors->has('message') || $errors->has('message_count'))
+                            @if ($errors->has('message') || $errors->has('message_count') || $errors->has('message_lines'))
                                 <div class="label">
                                     <span class="label-text-alt text-error">
-                                        {{ $errors->first('message') ?: $errors->first('message_count') }}
+                                        {{ $errors->first('message') ?: ($errors->first('message_count') ?: $errors->first('message_lines')) }}
                                     </span>
                                 </div>
                             @endif

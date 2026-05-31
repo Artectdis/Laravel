@@ -361,7 +361,7 @@
 
                 <h2 id="settings" class="scroll-mt-20 text-2xl font-bold mt-12 mb-2">Your Settings</h2>
                 <hr class="border-gray-300 mb-4" />
-                <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] justify-between gap-2">
+                <div class="grid grid-cols-1 md:grid-cols-3 justify-between gap-2">
                     <div class="flex flex-row gap-2 w-full card p-4 outline-0"><svg xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" class="size-6 fill-[#808080]">
                             <path fill-rule="evenodd"
@@ -381,15 +381,23 @@
                                 clip-rule="evenodd" />
                         </svg>
 
-                        Notifications <input type="checkbox" class="toggle toggle-primary ml-auto"
-                            checked="checked" />
+                        Notifications <div x-data="{ notifs: localStorage.getItem('notifications') !== 'false' }" class="ml-auto">
+                            <input type="checkbox" id="notifications-toggle" class="toggle toggle-primary"
+                                x-bind:checked="notifs"
+                                @change="
+                                notifs = $event.target.checked;
+                                localStorage.setItem('notifications', notifs ? 'true' : 'false');
+                                $dispatch('notifications-changed', { enabled: notifs });
+                            " />
+                        </div>
                     </div>
                     <div class="flex flex-row gap-2 w-full card p-4 outline-0"><svg xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24" class="size-6 fill-[#808080]">
+                            viewBox="0 0 24 24" fill="currentColor" class="size-6 fill-[#808080]">
                             <path fill-rule="evenodd"
-                                d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z"
+                                d="M10.5 3.798v5.02a3 3 0 0 1-.879 2.121l-2.377 2.377a9.845 9.845 0 0 1 5.091 1.013 8.315 8.315 0 0 0 5.713.636l.285-.071-3.954-3.955a3 3 0 0 1-.879-2.121v-5.02a23.614 23.614 0 0 0-3 0Zm4.5.138a.75.75 0 0 0 .093-1.495A24.837 24.837 0 0 0 12 2.25a25.048 25.048 0 0 0-3.093.191A.75.75 0 0 0 9 3.936v4.882a1.5 1.5 0 0 1-.44 1.06l-6.293 6.294c-1.62 1.621-.903 4.475 1.471 4.88 2.686.46 5.447.698 8.262.698 2.816 0 5.576-.239 8.262-.697 2.373-.406 3.092-3.26 1.47-4.881L15.44 9.879A1.5 1.5 0 0 1 15 8.818V3.936Z"
                                 clip-rule="evenodd" />
                         </svg>
+
                         Test Theme <input type="checkbox" id="cool-toggle" class="toggle toggle-primary ml-auto" />
                     </div>
                 </div>
@@ -428,16 +436,22 @@
         <script>
             const checkbox = document.getElementById('dark-mode-toggle');
             const checkbox2 = document.getElementById('cool-toggle');
+            const checkbox3 = document.getElementById('notifications-toggle');
+
             checkbox.checked = document.documentElement.classList.contains('dark-mode-filter');
             checkbox2.checked = document.documentElement.classList.contains('cool-filter');
+            checkbox3.checked = localStorage.getItem('notifications') !== 'false';
 
             checkbox.addEventListener('change', () => {
-                document.documentElement.classList.toggle('dark-mode-filter', checkbox.checked); // html +- dark
-                localStorage.setItem('theme', checkbox.checked ? 'dark' : 'light'); // theme.dark
+                document.documentElement.classList.toggle('dark-mode-filter', checkbox.checked)
+                localStorage.setItem('theme', checkbox.checked ? 'dark' : 'light');
             });
             checkbox2.addEventListener('change', () => {
                 document.documentElement.classList.toggle('cool-filter', checkbox2.checked);
                 localStorage.setItem('cool', checkbox2.checked ? 'true' : 'false');
+            });
+            checkbox3.addEventListener('change', () => {
+                localStorage.setItem('notifications', checkbox3.checked ? 'true' : 'false');
             });
         </script>
 </x-layout>

@@ -613,10 +613,11 @@ trix-editor {
         border: none; 
     }
 
-    .dark-mode-filter &::-webkit-scrollbar-thumb {
-        background-color: #888 !important;
-    }
     .dark-mode-filter &::-webkit-scrollbar-track {
+        background-color: #ccc !important;
+    }
+    
+    .dark-mode-filter &::-webkit-scrollbar-thumb {
         background-color: #888 !important;
     }
 }
@@ -625,21 +626,30 @@ trix-editor {
     filter: saturate(10) !important;
 }
 
-/* AFTER */
+.dark-mode-filter html.cool-filter body {
+  background: #f00 !important;
+}
+
 html.cool-filter body {
-  background: transparent;
+    background: transparent !important;
 }
+
 html.cool-filter {
-  background: linear-gradient(to bottom, #fff4 0%, 80%, #478ade 100%);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  min-height: 100%;
+    background: linear-gradient(to bottom, #fff4 0%, 80%, #478ade 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100%;
 }
+
 html.dark-mode-filter.cool-filter {
-  background: linear-gradient(to bottom, #fff 0%, 80%, #d1e6ff 100%);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  min-height: 100%;
+  background: linear-gradient(to bottom, #fff 0%, 80%, #d1e6ff 100%) !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+    min-height: 100% !important;
+}
+
+html.dark-mode-filter.cool-filter body {
+    background: transparent !important;
 }
 
 .trix-content ul {
@@ -656,4 +666,10 @@ html.dark-mode-filter.cool-filter {
 
 .trix-content li {
     margin: 0.25rem 0;
+}
+.chirp-body-clamp {
+    max-height: 300px;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }

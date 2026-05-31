@@ -9,6 +9,9 @@
         if (localStorage.getItem('cool') === 'true') {
             document.documentElement.classList.add('cool-filter');
         }
+        if (localStorage.getItem('notifications') === null) {
+            localStorage.setItem('notifications', 'true');
+        }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

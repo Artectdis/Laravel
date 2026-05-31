@@ -61,8 +61,9 @@
                                 $firstTag = $chirp->tags->first();
                                 $extraCount = $chirp->tags->count() - 1;
                             @endphp
-                            <a href="/?tag={{ $firstTag->name }}" onclick="event.stopPropagation()"
-                                class="badge badge-sm border-none !text-xs !px-2 !py-1 rounded-full min-w-0 flex items-center overflow-hidden flex-shrink"
+                            <a href="/?tag={{ $firstTag->id }}" title="{{ $firstTag->name }}"
+                                onclick="event.stopPropagation()"
+                                class="badge badge-sm border-none !text-xs !px-2 !py-1 dark:!text-black rounded-full min-w-0 flex items-center overflow-hidden flex-shrink"
                                 style="background-color: {{ $firstTag->color }}; color: white;">
                                 <span class="truncate block min-w-0">#{{ $firstTag->name }}</span>
                             </a>
@@ -76,15 +77,27 @@
                     </div>
 
                     {{-- Desktop: show up to 3 tags + N --}}
-                    <div class="hidden sm:flex gap-1 -mt-2 items-center ml-auto mr-4 min-w-0 max-w-[240px]">
+                    <div
+                        class="hidden sm:flex gap-1 -mt-2 items-center justify-end mr-4 min-w-0 w-[240px] shrink ml-auto">
                         @if ($chirp->tags->isNotEmpty())
                             @php
-                                $visible = $chirp->tags->take(3);
-                                $extraCount = $chirp->tags->count() - 3;
+                                $nameLength = strlen($chirp->user->name);
+                                $isNameLong = $nameLength > 20;
+
+                                $visible = $isNameLong ? $chirp->tags->take(1) : $chirp->tags->take(3);
+                                $extraCount = $chirp->tags->count() - $visible->count();
+
+                                $tagMaxW = match ($visible->count()) {
+                                    1 => 'max-w-[200px]',
+                                    2 => 'max-w-[96px]',
+                                    default => 'max-w-[64px]',
+                                };
                             @endphp
+
                             @foreach ($visible as $tag)
-                                <a href="/?tag={{ $tag->name }}" onclick="event.stopPropagation()"
-                                    class="badge badge-sm border-none !text-xs !px-2 !py-1 rounded-full min-w-0 flex items-center overflow-hidden flex-shrink"
+                                <a href="/?tag={{ $tag->id }}" title="{{ $tag->name }}"
+                                    onclick="event.stopPropagation()"
+                                    class="badge badge-sm border-none !text-xs !px-2 !py-1 dark:!text-black rounded-full min-w-0 flex items-center overflow-hidden flex-shrink {{ $tagMaxW }}"
                                     style="background-color: {{ $tag->color }}; color: white;">
                                     <span class="truncate block min-w-0">#{{ $tag->name }}</span>
                                 </a>
@@ -136,7 +149,7 @@
                         </div> --}}
                 </div>
                 <div class="w-full trix-content {{ $replying ? 'mt-0.5' : '-mt-1' }} flex">
-                    <div class="flex-1">
+                    <div class="flex-1 chirp-body-clamp">
                         @safeHtml($chirp->message)
                     </div>
 

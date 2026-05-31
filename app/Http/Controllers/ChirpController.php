@@ -50,16 +50,24 @@ class ChirpController extends Controller
      */
     public function store(Request $request)
     {
-        $plainText = trim(strip_tags(str_replace('&nbsp;', ' ', $request->message)));
-        $request->merge(['message_count' => mb_strlen($plainText)]);
+        $rawHtml = $request->message ?? '';
+        $lineCount = substr_count($rawHtml, '<br>') + substr_count($rawHtml, '<br/>') + substr_count($rawHtml, "\n") + 1;
+        $plainText = trim(strip_tags(str_replace('&nbsp;', ' ', $rawHtml)));
+
+        $request->merge([
+            'message_count' => mb_strlen($plainText),
+            'message_lines' => $lineCount,
+        ]);
         $validated = $request->validate([
             'message' => 'required|string',
             'message_count' => 'numeric|min:5|max:255',
+            'message_lines' => 'numeric|max:20',
             'parent_id' => 'nullable|exists:chirps,id',
         ], [
             'message.required' => 'Please write something to chirp! 🐤',
             'message_count.min' => 'Your chirp is too short! Make it at least 5 characters. 🐤',
             'message_count.max' => 'Your chirp is too long! Keep it under 255 characters. 🐤',
+            'message_lines.max' => 'Your chirp is too tall! Keep it under 20 lines. 🐤',
         ]);
 
         $chirp = auth()->user()->chirps()->create($validated);
@@ -111,7 +119,9 @@ class ChirpController extends Controller
         $oldMessageLength = mb_strlen(trim(strip_tags(str_replace('&nbsp;', ' ', $oldMessage))));
 
         return view('chirps.show', compact('chirp'), [
-            'availableTags' => Tag::orderBy('name')->get(),
+            'availableTags' => Tag::withCount('chirps')
+                ->orderBy('chirps_count', 'desc')
+                ->get(),
             'oldMessageLength' => $oldMessageLength,
         ]);
     }
@@ -152,16 +162,25 @@ class ChirpController extends Controller
     public function update(Request $request, Chirp $chirp)
     {
         $this->authorize('update', $chirp);
-        $plainText = trim(strip_tags(str_replace('&nbsp;', ' ', $request->message)));
-        $request->merge(['message_count' => mb_strlen($plainText)]);
+        $rawHtml = $request->message ?? '';
+        $lineCount = substr_count($rawHtml, '<br>') + substr_count($rawHtml, '<br/>') + substr_count($rawHtml, "\n") + 1;
+        $plainText = trim(strip_tags(str_replace('&nbsp;', ' ', $rawHtml)));
+
+        $request->merge([
+            'message_count' => mb_strlen($plainText),
+            'message_lines' => $lineCount,
+        ]);
+
         $validated = $request->validate([
             'message' => 'required|string',
             'message_count' => 'numeric|min:5|max:255',
+            'message_lines' => 'numeric|max:20',
             'parent_id' => 'nullable|exists:chirps,id',
         ], [
             'message.required' => 'Please write something to chirp! 🐤',
             'message_count.min' => 'Your chirp is too short! Make it at least 5 characters. 🐤',
             'message_count.max' => 'Your chirp is too long! Keep it under 255 characters. 🐤',
+            'message_lines.max' => 'Your chirp is too tall! Keep it under 20 lines. 🐤',
         ]);
 
         $chirp->update($validated);

@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class NewChirpReply extends Notification implements ShouldQueue
 {
@@ -22,7 +23,8 @@ class NewChirpReply extends Notification implements ShouldQueue
     public function toArray($notifiable): array
     {
         return [
-            'message' => "{$this->chirp->user->name} posted a reply on your chirp!",
+            'user' => $this->chirp->user->name,
+            'message' => "posted a reply on your chirp!",
             'url' => url("/chirps/{$this->chirp->id}"),
         ];
     }

@@ -11,27 +11,27 @@
                                     d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
                             </svg>
 
-                            <span>Replying to <span
+                            <span class="truncate">Replying to <span
                                     class="font-semibold">{{ $chirp->parentUser->user->name }}</span></span>
 
-                            @if ($chirp->tags->isNotEmpty())
-                                <div class="flex flex-wrap gap-1 px-4 pt-3 pb-0">
-                                    @foreach ($chirp->tags as $tag)
-                                        <a href="/?tag={{ $tag->name }}"
-                                            class="badge badge-sm border-none !text-white dark:!text-black !text-xs !px-2 !py-1 rounded-full hover:brightness-110 transition-all"
-                                            style="background-color: {{ $tag->color }}">
-                                            #{{ $tag->name }}
-                                        </a>
-                                    @endforeach
-                                </div>
-                            @endif
 
                         </div>
-                        <div class="ml-6 text-gray-500 text-sm italic">
+                        <div class="ml-6 text-gray-500 text-sm italic truncate">
                             {{ Str::limit(strip_tags($chirp->parent->message), 60) }}
                         </div>
                     </div>
                 </a>
+                @if ($chirp->tags->isNotEmpty())
+                    <div class="flex flex-wrap gap-1 pb-0 mb-4 -mt-2">
+                        @foreach ($chirp->tags as $tag)
+                            <a href="/?tag={{ $tag->id }}"
+                                class="badge badge-sm border-none !text-white dark:!text-black !text-xs !px-2 !py-1 rounded-full hover:brightness-110 transition-all"
+                                style="background-color: {{ $tag->color }}">
+                                #{{ $tag->name }}
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
             @else
                 <a href="/" class="inline-block size-fit mb-4">
                     <div
@@ -47,7 +47,7 @@
                 @if ($chirp->tags->isNotEmpty())
                     <div class="flex flex-wrap gap-1 pb-0 mb-4 -mt-2">
                         @foreach ($chirp->tags as $tag)
-                            <a href="/?tag={{ $tag->name }}"
+                            <a href="/?tag={{ $tag->id }}"
                                 class="badge badge-sm border-none !text-white dark:!text-black !text-xs !px-2 !py-1 rounded-full hover:brightness-110 transition-all"
                                 style="background-color: {{ $tag->color }}">
                                 #{{ $tag->name }}
@@ -73,8 +73,8 @@
                         <div class="flex justify-between w-full">
                             <div class="flex gap-2 flex-wrap">
                                 <div class="flex flex-col">
-                                    <div class="flex gap-2 items-center">
-                                        <a class="text-lg font-semibold hover:underline !text-black w-fit"
+                                    <div class="flex gap-2 items-center min-w-0">
+                                        <a class="text-lg font-semibold hover:underline !text-black truncate max-w-[200px] sm:max-w-[340px]"
                                             href="{{ $profileUrl }}" onclick="event.stopPropagation()">
                                             {{ $chirp->user ? $chirp->user->name : 'Anonymous' }}
                                         </a>
@@ -142,15 +142,16 @@
                     showTagInput: false,
                     tagInput: '',
                     tags: [],
+                    availableTags: {{ Js::from($availableTags->map(fn($t) => ['name' => $t->name, 'color' => $t->color, 'caption' => $t->chirps_count . ' ' . Str::plural('Chirp', $t->chirps_count)])) }},
                     addTag() {
                         const name = this.tagInput.trim().toLowerCase().replace(/\s+/g, '-');
-                        if (name && !this.tags.includes(name) && this.tags.length < 5) {
-                            this.tags.push(name);
+                        if (name && !this.tags.some(t => t.name === name) && this.tags.length < 5) {
+                            this.tags.push({ name, color: '#64b5f6' });
                         }
                         this.tagInput = '';
                     },
-                    removeTag(tag) {
-                        this.tags = this.tags.filter(t => t !== tag);
+                    removeTag(name) {
+                        this.tags = this.tags.filter(t => t.name !== name);
                     },
                     isActive() {
                         return this.focused || this.count > 0 || this.showTagInput;
@@ -166,9 +167,17 @@
                     <div class="transition-all duration-200 ease-in-out">
                         <trix-editor input="message_hidden" toolbar="chirp_toolbar" placeholder="Chirp your reply"
                             @trix-focus="focused = true" @trix-blur="if(count === 0) focused = false"
-                            @trix-change="count = $event.target.editor.getDocument().toString().length - 1"
+                            @trix-change="
+                                const raw = $event.target.editor.getDocument().toString();
+                                const text = raw.replace(/\n$/, '');
+                                if (text.length > 255) {
+                                    $event.target.editor.setSelectedRange([255, text.length]);
+                                    $event.target.editor.deleteInDirection('forward');
+                                }
+                                count = Math.min(text.length, 255);
+                            "
                             class="!pt-5 !pl-4 trix-reply-editor trix-content textarea align-middle textarea-bordered w-full transition-all duration-200
-                                        {{ $errors->has('message') ? 'textarea-error' : '' }}"
+                                {{ $errors->has('message') ? 'textarea-error' : '' }}"
                             :class="isActive() ?
                                 'rounded-lg h-auto !min-h-[8rem] focus:outline-none focus:ring-2 focus:ring-blue-200 [.dark-mode-filter_&]:focus:ring-blue-600' :
                                 '!min-h-[4rem] overflow-hidden py-2 leading-[28px]'">
@@ -176,8 +185,8 @@
 
                         <div class="mt-2 flex flex-col gap-2 w-full">
 
-                            <div x-show="isActive()" class="flex items-center gap-2">
-                                <button type="button" @mousedown.prevent @click="showTagInput = !showTagInput"
+                            <div x-show="isActive()" class="flex items-center gap-2" @mousedown.prevent>
+                                <button type="button" @click="showTagInput = !showTagInput"
                                     class="btn btn-ghost btn-circle !h-8 !w-8 !min-h-0 !p-1 flex items-center justify-center transition-colors"
                                     :class="tags.length > 0 || showTagInput ? '!text-primary' : '!text-base-content/50'">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#636363"
@@ -186,42 +195,71 @@
                                             d="M11.097 1.515a.75.75 0 0 1 .589.882L10.666 7.5h4.47l1.079-5.397a.75.75 0 1 1 1.47.294L16.665 7.5h3.585a.75.75 0 0 1 0 1.5h-3.885l-1.2 6h3.585a.75.75 0 0 1 0 1.5h-3.885l-1.08 5.397a.75.75 0 1 1-1.47-.294l1.02-5.103h-4.47l-1.08 5.397a.75.75 0 1 1-1.47-.294l1.02-5.103H3.75a.75.75 0 0 1 0-1.5h3.885l1.2-6H5.25a.75.75 0 0 1 0-1.5h3.885l1.08-5.397a.75.75 0 0 1 .882-.588ZM10.365 9l-1.2 6h4.47l1.2-6h-4.47Z"
                                             clip-rule="evenodd" />
                                     </svg>
-
                                 </button>
 
-                                <template x-for="tag in tags" :key="tag">
+                                <template x-for="tag in tags" :key="tag.name">
                                     <span
-                                        class="badge badge-sm dark:text-black bg-primary text-white dark:!text-black border-none px-2 py-1 rounded-full flex items-center text-xs">
-                                        #<span x-text="tag" class="-mx-2"></span>
-                                        <button type="button" @mousedown.prevent @click="removeTag(tag)"
+                                        class="badge badge-sm dark:text-black text-white border-none px-2 py-1 rounded-full flex items-center text-xs"
+                                        :style="`background-color: ${tag.color}`">
+                                        #<span x-text="tag.name" class="-mx-2"></span>
+                                        <button type="button" @mousedown.prevent @click="removeTag(tag.name)"
                                             class="ml-1 opacity-60 hover:opacity-100 leading-none">×</button>
                                     </span>
                                 </template>
                             </div>
 
-                            <div x-show="showTagInput && isActive()" x-transition x-cloak
-                                class="bg-gray-50 rounded-lg p-3 flex flex-col gap-1">
+                            <div x-show="showTagInput && isActive()" x-transition x-cloak x-data="{ search: '' }"
+                                class="bg-white rounded-lg p-3 flex flex-col gap-2 dark:bg-[#ccc]"
+                                @mousedown="if (!['INPUT', 'BUTTON', 'TEXTAREA'].includes($event.target.tagName)) $event.preventDefault()">
 
-                                @if ($availableTags->isNotEmpty())
-                                    <div class="flex flex-wrap gap-1 items-center">
-                                        @foreach ($availableTags as $tag)
-                                            <button type="button" @mousedown.prevent
-                                                @click="tags.includes('{{ $tag->name }}') ? removeTag('{{ $tag->name }}') : (tags.length < 5 && tags.push('{{ $tag->name }}'))"
-                                                :class="tags.includes('{{ $tag->name }}') ?
-                                                    'opacity-100 ring-2' :
-                                                    'opacity-40 hover:opacity-70'"
-                                                class="badge badge-sm px-2 py-1 rounded-full transition-all cursor-pointer text-xs
-                                                        text-white 
-                                                        dark:text-black !border-none !outline-none"
-                                                style="background-color: {{ $tag->color }}">
-                                                #{{ $tag->name }}
-                                            </button>
-                                        @endforeach
-                                    </div>
-                                @endif
+                                <input type="text" x-model="search" placeholder="Search tags..."
+                                    class="input input-sm input-bordered w-full text-sm" />
 
-                                {{-- New tag input --}}
-                                <div class="flex gap-2 mt-1 items-center">
+                                <div class="flex flex-col max-h-60 overflow-y-auto rounded-lg custom-scrollbar [&::-webkit-scrollbar]:!w-2"
+                                    @mousedown="if (!['INPUT', 'BUTTON', 'TEXTAREA'].includes($event.target.tagName)) $event.preventDefault()">
+
+                                    <template
+                                        x-for="tag in availableTags.filter(t => t.name.includes(search.toLowerCase().trim()))"
+                                        :key="tag.name">
+                                        <div class="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-300 transition-colors border-b border-gray-100 dark:border-gray-400 last:border-0"
+                                            @mousedown.prevent
+                                            @click="tags.some(t => t.name === tag.name)
+                                                ? removeTag(tag.name)
+                                                : (tags.length < 5 && tags.push({ name: tag.name, color: tag.color }))"
+                                            :class="tags.some(t => t.name === tag.name) ?
+                                                'bg-blue-100 hover:!bg-blue-200' : ''">
+
+                                            <div class="flex items-center gap-3">
+                                                <span
+                                                    class="px-2 py-0.5 rounded-full text-[11px] text-white dark:text-black transition-all"
+                                                    :class="tags.some(t => t.name === tag.name) ? 'opacity-100 scale-105' :
+                                                        'opacity-70'"
+                                                    :style="`background-color: ${tag.color}`">
+                                                    #<span x-text="tag.name"></span>
+                                                </span>
+                                                <span class="text-xs text-gray-400 dark:text-gray-500"
+                                                    x-text="tag.caption"></span>
+                                            </div>
+
+                                            <template x-if="tags.some(t => t.name === tag.name)">
+                                                <x-ts-icon name="check" class="h-4 w-4 text-primary-500" />
+                                            </template>
+                                            <template x-if="!tags.some(t => t.name === tag.name)">
+                                                <x-ts-icon name="plus" class="h-4 w-4 text-gray-300" />
+                                            </template>
+                                        </div>
+                                    </template>
+
+                                    <template
+                                        x-if="availableTags.filter(t => t.name.includes(search.toLowerCase().trim())).length === 0">
+                                        <div class="flex flex-col items-center gap-2 py-4">
+                                            <p class="text-sm text-gray-400">No tag found.</p>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <div class="flex gap-2 items-center pt-2 border-t border-gray-100"
+                                    x-show="availableTags.filter(t => t.name.includes(search.toLowerCase().trim())).length === 0">
                                     <input type="text" x-model="tagInput" @keydown.enter.prevent="addTag()"
                                         @keydown.comma.prevent="addTag()" placeholder="New tag..."
                                         class="input input-sm input-bordered w-40 text-sm" maxlength="30">
@@ -232,17 +270,16 @@
                                 </div>
                             </div>
 
-                            {{-- Hidden inputs submitted with the form --}}
-                            <template x-for="tag in tags" :key="tag">
-                                <input type="hidden" name="tags[]" :value="tag">
+                            <template x-for="tag in tags" :key="tag.name">
+                                <input type="hidden" name="tags[]" :value="tag.name">
                             </template>
                         </div>
                     </div>
 
-                    @if ($errors->has('message') || $errors->has('message_count'))
+                    @if ($errors->has('message') || $errors->has('message_count') || $errors->has('message_lines'))
                         <div class="label">
                             <span class="label-text-alt text-error">
-                                {{ $errors->first('message') ?: $errors->first('message_count') }}
+                                {{ $errors->first('message') ?: ($errors->first('message_count') ?: $errors->first('message_lines')) }}
                             </span>
                         </div>
                     @endif
